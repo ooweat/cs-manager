@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+		"-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+		"http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<!-- 사용자 메인페이지 content  -->
+<tiles-definitions>
+	<definition name="layout" template="/WEB-INF/views/common/template/layout.jsp">
+		<put-attribute name="static" value="/WEB-INF/views/common/template/static.jsp"/>
+		<put-attribute name="content" value=""/><!-- 내용이 계속 바뀌니까 비우기 -->
+		<put-attribute name="footer" value="/WEB-INF/views/common/template/footer.jsp"/>
+	</definition>
+
+	<definition name="*.tiles" extends="layout">
+		<put-attribute name="content" value="/WEB-INF/views/{1}.jsp"/>
+	</definition>
+
+	<definition name="*/*.tiles" extends="layout">
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}.jsp"/>
+	</definition>
+
+	<definition name="*/*/*.tiles" extends="layout">
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}/{3}.jsp"/>
+	</definition>
+	<definition name="*/*/*/*.tiles" extends="layout">
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}/{3}/{4}.jsp"/>
+	</definition>
+
+	<!-- 로딩이 있는 tiles -->
+	<definition name="loading" template="/WEB-INF/views/common/template/loading.jsp">
+		<put-attribute name="static" value="/WEB-INF/views/common/template/static.jsp"/>
+		<put-attribute name="content" value=""/><!-- 내용이 계속 바뀌니까 비우기 -->
+		<put-attribute name="footer" value="/WEB-INF/views/common/template/footer.jsp"/>
+	</definition>
+	<definition name="*.loading" extends="loading">
+		<put-attribute name="content" value="/WEB-INF/views/{1}.jsp"/>
+	</definition>
+
+	<definition name="*/*.loading" extends="loading">
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}.jsp"/>
+	</definition>
+
+	<definition name="*/*/*.loading" extends="loading">
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}/{3}.jsp"/>
+	</definition>
+	<definition name="*/*/*/*.loading" extends="loading">
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}/{3}/{4}.jsp"/>
+	</definition>
+
+	<!-- 헤더,풋터가 필요없이 jsp페이지만 켜지게  -->
+	<definition name="empty" template="/WEB-INF/views/common/template/empty.jsp">
+		<put-attribute name="content" value=""/>
+	</definition>
+
+	<definition name="*.empty" extends="empty">
+		<put-attribute name="content" value="/WEB-INF/views/{1}.jsp"/>
+	</definition>
+
+	<definition name="*/*.empty" extends="empty">
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}.jsp"/>
+	</definition>
+
+	<definition name="*/*/*.empty" extends="empty">
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}/{3}.jsp"/>
+	</definition>
+
+	<!-- nav bar 만 켜지게-->
+	<definition name="navbar" template="/WEB-INF/views/common/template/navbar.jsp">
+		<put-attribute name="content" value=""/>
+	</definition>
+
+	<definition name="*.navbar" extends="navbar">
+		<put-attribute name="content" value="/WEB-INF/views/{1}.jsp"/>
+	</definition>
+
+	<definition name="*/*.navbar" extends="navbar">
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}.jsp"/>
+	</definition>
+
+	<definition name="*/*/*.navbar" extends="navbar">
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}/{3}.jsp"/>
+	</definition>
+</tiles-definitions>
