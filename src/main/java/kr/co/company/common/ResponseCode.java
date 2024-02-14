@@ -20,6 +20,7 @@ public enum ResponseCode {
     RESULT_NOUSE = "9902";            //사용안함*/
 
     //기존 Code에 대응하기 위함 twkim
+    
     ERROR_MODIFY("5113", "수정 실패", "원인 파악 후 재시도 요망"),
     ERROR_DELETE("5113", "삭제 실패", "원인 파악 후 재시도 요망"),
     ERROR_COMPANY("7114", "유효하지 않은 company", "시스템에 존재하지 않거나 유효하지 않은 company 입니다."),
@@ -28,6 +29,7 @@ public enum ResponseCode {
     ERROR_REQUEST("5113", "데이터 처리 실패", "재시도 요망"),
     ERROR_SEARCH("5114", "데이터 조회 실패", "재시도 요망"),
     ERROR_INSERT("5115", "데이터 입력 실패", "재시도 요망"),
+    SUCCESS_LOGIN("0000", "로그인 성공", "정상"),
     SUCCESS_REQUEST("0000", "데이터 처리 성공", "정상처리"),
     SUCCESS_SEARCH("0000", "데이터 조회 성공", "정상처리"),
     SUCCESS_INSERT("0000", "데이터 입력 성공", "정상처리"),
@@ -63,7 +65,7 @@ public enum ResponseCode {
     NOT_SUPPORT_PHONE_FORMAT("ERR_213","지원하지 않는 연락처 형식", "연락처 형식을 확인하시기 바랍니다."),
     MIN_VALUE("ERR_401", "최소 값 기준치 미달", "최소 기준에 미달합니다."),
     MAX_VALUE("ERR_402", "최대 값 기준치 초과", "최대 기준을 초과합니다."),
-
+    FAIL_LOGIN("9999", "로그인 실패", "실패"),
     COUPON_ERROR("9999", "쿠폰 발권 실패", "재발권 요청이 필요합니다.")
     ;
 
