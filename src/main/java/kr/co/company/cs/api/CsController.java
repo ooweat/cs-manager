@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/cs")
 public class CsController {
-    //애자일 모델 추상화를 위해 Dto 생략 후, Model로 다이렉트 처리
     private final CsService csService;
     
     public CsController(final CsService csService){
