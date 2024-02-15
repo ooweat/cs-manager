@@ -1,4 +1,4 @@
-package kr.co.company.common;
+package kr.co.company.common.domain;
 
 import com.github.pagehelper.Page;
 import lombok.Data;

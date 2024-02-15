@@ -1,4 +1,4 @@
-package kr.co.company.common;
+package kr.co.company.common.domain;
 
 import java.time.LocalDateTime;
 import lombok.Getter;

@@ -1,5 +1,6 @@
-package kr.co.company.common;
+package kr.co.company.common.domain;
 
+import kr.co.company.common.ResponseCode;
 import lombok.Getter;
 
 @Getter
