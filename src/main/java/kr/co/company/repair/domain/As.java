@@ -1,6 +1,6 @@
 package kr.co.company.repair.domain;
 
-import kr.co.company.common.BaseTimeEntity;
+import kr.co.company.common.domain.BaseTimeEntity;
 import lombok.Getter;
 
 //기존 컬럼 인계

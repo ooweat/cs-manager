@@ -27,4 +27,9 @@ public class CsController {
     public Map<String, Object> findAllByRevisionType(){
         return csService.findAllByRevisionType();
     }
+    
+    @GetMapping("/errors")
+    public Map<String, Object> findAllByErrorType(){
+        return csService.findAllByErrorType();
+    }
 }

@@ -3,7 +3,7 @@ package kr.co.company.auth.api;
 import javax.servlet.http.HttpSession;
 import kr.co.company.auth.application.AuthService;
 import kr.co.company.auth.application.dto.LoginRequest;
-import kr.co.company.common.BaseResponse;
+import kr.co.company.common.domain.BaseResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

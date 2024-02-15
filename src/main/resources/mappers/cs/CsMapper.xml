@@ -13,4 +13,9 @@
     FROM TB_REVISION
     ORDER BY SEQ ASC
   </select>
+  <select id="findAllByErrorType" resultType="kr.co.company.cs.domain.SeqName">
+    SELECT SEQ AS SEQ, NAME AS NAME, T_TYPE AS TYPE
+    FROM TB_ERROR
+    ORDER BY SEQ ASC
+  </select>
 </mapper>

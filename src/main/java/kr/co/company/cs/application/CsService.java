@@ -29,4 +29,11 @@ public class CsService {
         response.put("data", list);
         return response;
     }
+    
+    public Map<String, Object> findAllByErrorType() {
+        Map<String, Object> response = new HashMap<>();
+        List<SeqName> list = csMapper.findAllByErrorType();
+        response.put("data", list);
+        return response;
+    }
 }

@@ -1,6 +1,6 @@
 package kr.co.company.auth.domain;
 
-import kr.co.company.common.BaseTimeEntity;
+import kr.co.company.common.domain.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,11 +1,10 @@
 package kr.co.company.auth.application;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import kr.co.company.auth.application.dto.LoginRequest;
 import kr.co.company.auth.domain.Member;
 import kr.co.company.auth.mappers.AuthMapper;
-import kr.co.company.common.BaseResponse;
+import kr.co.company.common.domain.BaseResponse;
 import kr.co.company.common.ResponseCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

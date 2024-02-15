@@ -8,4 +8,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface CsMapper {
     List<SeqName> findAllTermialModel();
     List<SeqName> findAllByRevisionType();
+    List<SeqName> findAllByErrorType();
 }
