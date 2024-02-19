@@ -7,5 +7,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface RepairMapper {
-    List<As> findAllByDate(AsRequest asRequest);
+    List<As> findAllByRequest(AsRequest asRequest);
+    As findRepairByAsNo(String asNo);
+    boolean patchRepair(String asNo, As as);
+    boolean createRepair(As as);
 }
