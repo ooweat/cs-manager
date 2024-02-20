@@ -18,7 +18,8 @@
     CASE WHEN TE3.NAME IS NULL THEN '-' ELSE TE3.NAME END AS ATNAME,
     CASE WHEN TR.NAME IS NULL THEN '-' ELSE TR.NAME END AS MBRVNAME,
     CASE WHEN TR2.NAME IS NULL THEN '-' ELSE TR2.NAME END AS SBRVNAME,
-    CASE WHEN TR3.NAME IS NULL THEN '-' ELSE TR3.NAME END AS ICRVNAME
+    CASE WHEN TR3.NAME IS NULL THEN '-' ELSE TR3.NAME END AS ICRVNAME,
+    REPAIR_DATE AS REPAIRDATE
     FROM TB_AS_LIST LIST
     LEFT JOIN TB_COMPANY COMP ON LIST.COMP_SEQ = COMP.COMP_SEQ
     LEFT JOIN TB_TERMINAL_MODEL TM ON LIST.TID_SEQ = TM.TID_SEQ
@@ -61,6 +62,7 @@
            IC_RV_SEQ                              AS ICRVSEQ,
            TR3.NAME                               AS ICRVNAME,
            PTN_COMMENT                            AS PTNCOMMENT,
+           REPAIR_DATE                            AS REPAIRDATE,
            REG_TIMESTAMP                          AS CREATEDATE,
            MODIFY_TIMESTAMP                       AS MODIFYDATE
     FROM TB_AS_LIST LIST
@@ -83,7 +85,7 @@
                             SEQUENCE_LEVEL, REG_TIMESTAMP, RT_SEQ, AT_SEQ,
                             MODIFY_USER, TID_SEQ, PTN_CP_DATE,
                             PTN_MEMO, CID, SERIAL_NO, SAM_FLAG, SUPPORT_TYPE, MAINBOARD_RV_SEQ,
-                            SUBBOARD_RV_SEQ, IC_RV_SEQ)
+                            SUBBOARD_RV_SEQ, IC_RV_SEQ, REPAIR_DATE)
     VALUES (NEXTVAL('TB_AS_LIST_SEQ'), #{asNo}, #{ptnWriter}, #{compSeq}, #{compName}, '',
             '', '', '', '',
             '', #{terminalId}, #{vmSeq}, #{trbSeq}, 0, #{ptnComment},
@@ -91,7 +93,7 @@
             CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Seoul', #{rtSeq}, #{atSeq},
             #{modifyUser}, #{tidSeq}, #{ptnCpDate}, #{ptnMemo}, #{cid}, #{serialNo}, #{samFlag},
             'R',
-            #{mbRvSeq}, #{sbRvSeq}, #{icRvSeq})
+            #{mbRvSeq}, #{sbRvSeq}, #{icRvSeq}, #{repairDate})
   </insert>
   <update id="patchRepair" parameterType="kr.co.company.repair.domain.As">
     UPDATE TB_AS_LIST
@@ -110,10 +112,13 @@
         SAM_FLAG         = #{as.samFlag},
         MAINBOARD_RV_SEQ = #{as.mbRvSeq},
         SUBBOARD_RV_SEQ  = #{as.sbRvSeq},
-        IC_RV_SEQ        = #{as.icRvSeq}
+        IC_RV_SEQ        = #{as.icRvSeq},
+        REPAIR_DATE      = #{as.repairDate}
     WHERE AS_NO = #{asNo}
   </update>
   <delete id="deleteRepair" parameterType="string">
-    DELETE FROM TB_AS_LIST WHERE AS_NO = #{asNo}
+    DELETE
+    FROM TB_AS_LIST
+    WHERE AS_NO = #{asNo}
   </delete>
 </mapper>

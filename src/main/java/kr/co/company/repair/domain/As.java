@@ -87,6 +87,8 @@ public class As extends BaseTimeEntity {
     private String mbRvName;
     private String sbRvName;
     private String icRvName;
+    
+    private String repairDate;
     private int page;
     
     public As(String asNo, As as) {
@@ -147,5 +149,6 @@ public class As extends BaseTimeEntity {
         this.sbRvName = as.getSbRvName();
         this.icRvName = as.getIcRvName();
         this.page = as.getPage();
+        this.repairDate = as.getRepairDate();
     }
 }
