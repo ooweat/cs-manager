@@ -1,12 +1,14 @@
 package kr.co.company.cs.application;
 
 import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import kr.co.company.common.ResponseCode;
 import kr.co.company.common.domain.BaseResponse;
 import kr.co.company.common.domain.PageNavigation;
+import kr.co.company.cs.application.dto.SettingRequest;
 import kr.co.company.cs.domain.CommonInfoType;
 import kr.co.company.cs.mappers.CsMapper;
 import kr.co.company.repair.domain.As;
@@ -50,21 +52,12 @@ public class CsService {
         return response;
     }
     
-    public Map<String, Object> findAllCommonSettingsType() {
+    public Map<String, Object> findAllCommonSettingsType(SettingRequest settingRequest) {
         Map<String, Object> response = new HashMap<>();
-        List<CommonInfoType> list = csMapper.findAllCommonSettingsType();
-        //Page<CommonInfoType> list = (Page<CommonInfoType>) csMapper.findAllCommonSettingsType();
+        PageHelper.startPage(settingRequest.getPage(), 10);
+        Page<CommonInfoType> list = (Page<CommonInfoType>) csMapper.findAllCommonSettingsType(settingRequest);
+        response.put("page", new PageNavigation(list));
         response.put("data", list);
-        //response.put("data", new PageNavigation(list));
-        return response;
-    }
-    
-    public Map<String, Object> findCommonSettingsTypeByName(String name) {
-        Map<String, Object> response = new HashMap<>();
-        List<CommonInfoType> list = csMapper.findCommonSettingsTypeByName(name);
-        //Page<CommonInfoType> list = (Page<CommonInfoType>) csMapper.findCommonSettingsTypeByName();
-        response.put("data", list);
-        //response.put("data", new PageNavigation(list));
         return response;
     }
     

@@ -3,6 +3,7 @@ package kr.co.company.cs.api;
 import java.util.Map;
 import kr.co.company.common.domain.BaseResponse;
 import kr.co.company.cs.application.CsService;
+import kr.co.company.cs.application.dto.SettingRequest;
 import kr.co.company.cs.domain.CommonInfoType;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -44,13 +46,8 @@ public class CsController {
     }
     
     @GetMapping("/settings")
-    public ResponseEntity<Map> findAllCommonSettingsType() {
-        return ResponseEntity.ok(csService.findAllCommonSettingsType());
-    }
-    
-    @GetMapping("/settings/{name}")
-    public ResponseEntity<Map> findCommonSettingsTypeByName(@PathVariable final String name) {
-        return ResponseEntity.ok(csService.findCommonSettingsTypeByName(name));
+    public ResponseEntity<Map> findAllCommonSettingsType(SettingRequest settingRequest) {
+        return ResponseEntity.ok(csService.findAllCommonSettingsType(settingRequest));
     }
     
     @PostMapping(value = "/setting", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
