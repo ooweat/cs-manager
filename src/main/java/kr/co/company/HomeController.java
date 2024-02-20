@@ -54,6 +54,6 @@ public class HomeController {
     
     @GetMapping("/settings")
     public ModelAndView settings() {
-        return new ModelAndView("/setting/settings.tiles");
+        return new ModelAndView("/setting/list.tiles");
     }
 }
