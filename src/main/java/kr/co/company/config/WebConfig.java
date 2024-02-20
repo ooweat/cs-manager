@@ -23,7 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("*")
-                .allowedMethods("GET", "POST")
+                .allowedMethods("*")
                 .maxAge(3000);
     }
     
@@ -33,7 +33,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor((HandlerInterceptor) sessionInterceptor)
             .addPathPatterns("/**")
             .excludePathPatterns(sessionInterceptor.allowList);
-    
+        
         PageInterceptor pageInterceptor = new PageInterceptor();
         registry.addInterceptor((HandlerInterceptor) pageInterceptor)
             .addPathPatterns(pageInterceptor.activeList)
