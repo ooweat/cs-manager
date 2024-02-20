@@ -1,19 +1,17 @@
 package kr.co.company.repair.application.dto;
 
-import java.util.Map;
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 public class AsRequest {
-    private int page;
-    private String sDate;
-    private String eDate;
     
-    @Builder
-    public AsRequest(final int page, final String sDate, final String eDate) {
+    private int page;
+    private String searchType;
+    private String searchValue;
+    
+    public AsRequest(final int page, final String searchType, final String searchValue) {
         this.page = page;
-        this.sDate = sDate;
-        this.eDate = eDate;
+        this.searchType = searchType;
+        this.searchValue = searchValue;
     }
 }

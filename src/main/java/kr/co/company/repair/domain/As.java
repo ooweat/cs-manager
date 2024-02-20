@@ -2,9 +2,11 @@ package kr.co.company.repair.domain;
 
 import kr.co.company.common.domain.BaseTimeEntity;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 //기존 컬럼 인계
 @Getter
+@RequiredArgsConstructor
 public class As extends BaseTimeEntity {
     
     private int seq;            //자동증가번호
@@ -86,4 +88,64 @@ public class As extends BaseTimeEntity {
     private String sbRvName;
     private String icRvName;
     private int page;
+    
+    public As(String asNo, As as) {
+        this.ptnWriter = as.getPtnWriter();
+        this.asNo = asNo;
+        this.compSeq = as.getCompSeq();
+        this.compName = as.getCompName();
+        this.businessNo = as.getBusinessNo();
+        this.ctmName = as.getCtmName();
+        this.ctmPhone = as.getCtmPhone();
+        this.ctmPlacePostCode = as.getCtmPlacePostCode();
+        this.ctmPlaceAddress1 = as.getCtmPlaceAddress1();
+        this.ctmPlaceAddress2 = as.getCtmPlaceAddress2();
+        this.ctmPlaceName = as.getCtmPlaceName();
+        this.ctmCharge = as.getCtmCharge();
+        this.terminalId = as.getTerminalId();
+        this.tidSeq = as.getTidSeq();
+        this.tidModelName = as.getTidModelName();
+        this.vmSeq = as.getVmSeq();
+        this.vmModelName = as.getVmModelName();
+        this.trbSeq = as.getTrbSeq();
+        this.trbName = as.getTrbName();
+        this.rtSeq = as.getRtSeq();
+        this.rtName = as.getRtName();
+        this.atSeq = as.getAtSeq();
+        this.atName = as.getAtName();
+        this.modemSerial = as.getModemSerial();
+        this.caseChange = as.getCaseChange();
+        this.repairCost = as.getRepairCost();
+        this.ptnComment = as.getPtnComment();
+        this.progressStatus = as.getProgressStatus();
+        this.ptnCompSeq = as.getPtnCompSeq();
+        this.transferCost = as.getTransferCost();
+        this.vpTimestamp = as.getVpTimestamp();
+        this.cpTimestamp = as.getCpTimestamp();
+        this.ptnFinale = as.getPtnFinale();
+        this.readCount = as.getReadCount();
+        this.ptnIp = as.getPtnIp();
+        this.groupNum = as.getGroupNum();
+        this.sequenceNum = as.getSequenceNum();
+        this.sequenceLevel = as.getSequenceLevel();
+        this.searchType = as.getSearchType();
+        this.searchData = as.getSearchData();
+        this.limitDay = as.getLimitDay();
+        this.completeDay = as.getCompleteDay();
+        this.modifyUser = as.getModifyUser();
+        this.deposit = as.getDeposit();
+        this.depositDate = as.getDepositDate();
+        this.ptnCpDate = as.getPtnCpDate();
+        this.ptnMemo = as.getPtnMemo();
+        this.serialNo = as.getSerialNo();
+        this.cid = as.getCid();
+        this.samFlag = as.getSamFlag();
+        this.mbRvSeq = as.getMbRvSeq();
+        this.sbRvSeq = as.getSbRvSeq();
+        this.icRvSeq = as.getIcRvSeq();
+        this.mbRvName = as.getMbRvName();
+        this.sbRvName = as.getSbRvName();
+        this.icRvName = as.getIcRvName();
+        this.page = as.getPage();
+    }
 }

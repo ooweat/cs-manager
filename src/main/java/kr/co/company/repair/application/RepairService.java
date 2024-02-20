@@ -1,12 +1,14 @@
 package kr.co.company.repair.application;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import kr.co.company.common.ResponseCode;
 import kr.co.company.common.domain.BaseResponse;
+import kr.co.company.common.domain.PageNavigation;
 import kr.co.company.repair.application.dto.AsRequest;
 import kr.co.company.repair.domain.As;
 import kr.co.company.repair.mappers.RepairMapper;
@@ -24,9 +26,9 @@ public class RepairService {
     
     public Map<String, Object> findAllByRequest(AsRequest asRequest) {
         Map<String, Object> response = new HashMap<>();
-        List<As> list = repairMapper.findAllByRequest(asRequest);
-        //Page<As> list = (Page<As>) repairMapper.findAllByDate(asRequest);
-        //response.put("page", new PageNavigation((Page<?>) list));
+        PageHelper.startPage(asRequest.getPage(), 10);
+        Page<As> list = (Page<As>) repairMapper.findAllByRequest(asRequest);
+        response.put("page", new PageNavigation(list));
         response.put("data", list);
         return response;
     }

@@ -1,6 +1,5 @@
 package kr.co.company.config;
 
-import kr.co.company.interceptor.PageInterceptor;
 import kr.co.company.interceptor.SessionInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -33,10 +32,5 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor((HandlerInterceptor) sessionInterceptor)
             .addPathPatterns("/**")
             .excludePathPatterns(sessionInterceptor.allowList);
-        
-        PageInterceptor pageInterceptor = new PageInterceptor();
-        registry.addInterceptor((HandlerInterceptor) pageInterceptor)
-            .addPathPatterns(pageInterceptor.activeList)
-            .excludePathPatterns(pageInterceptor.allowList);
     }
 }

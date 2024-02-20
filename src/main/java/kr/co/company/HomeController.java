@@ -4,10 +4,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import kr.co.company.common.application.CommonService;
 import kr.co.company.common.application.dto.SearchRequest;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -34,13 +34,26 @@ public class HomeController {
         return workbook;
     }
     
-    @GetMapping("/repairs")
-    public ModelAndView repairList(HttpSession session) {
+    @GetMapping(value="/repairs")
+    public ModelAndView repairList() {
         return new ModelAndView("/repair/list.loading");
     }
     
-    @GetMapping("/repair/info")
-    public ModelAndView repairRegist(HttpSession session) {
-        return new ModelAndView("/repair/info.tiles");
+    @GetMapping("/repairs/info")
+    public ModelAndView repairPage() {
+        return new ModelAndView("/repair/info.loading");
+    }
+    
+    @GetMapping("/repairs/{asNo}")
+    public ModelAndView repairPage(@PathVariable final String asNo) {
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("asNo", asNo);
+        mav.setViewName("/repair/info.loading");
+        return mav;
+    }
+    
+    @GetMapping("/settings")
+    public ModelAndView settings() {
+        return new ModelAndView("/setting/settings.tiles");
     }
 }
