@@ -8,6 +8,7 @@ import kr.co.company.repair.domain.As;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +33,11 @@ public class RepairController {
         return ResponseEntity.ok(repairService.findAllByRequest(asRequest));
     }
     
+    @GetMapping("/repairs/{asNo}")
+    public ResponseEntity<As> findRepairByAsNo(@PathVariable final String asNo) {
+        return ResponseEntity.ok(repairService.findRepairByAsNo(asNo));
+    }
+    
     @PostMapping(value = "/repair", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BaseResponse> createRepair(@RequestBody As as) {
         return ResponseEntity.ok(repairService.createRepair(as));
@@ -43,9 +49,8 @@ public class RepairController {
         return ResponseEntity.ok(repairService.patchRepair(asNo, as));
     }
     
-    @GetMapping("/repairs/{asNo}")
-    public ResponseEntity<As> findRepairByAsNo(@PathVariable final String asNo) {
-        return ResponseEntity.ok(repairService.findRepairByAsNo(asNo));
+    @DeleteMapping("/repairs/{asNo}")
+    public ResponseEntity<BaseResponse> deleteRepair(@PathVariable final String asNo) {
+        return ResponseEntity.ok(repairService.deleteRepair(asNo));
     }
-    
 }

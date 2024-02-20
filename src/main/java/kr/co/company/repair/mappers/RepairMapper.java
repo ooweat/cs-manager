@@ -11,4 +11,5 @@ public interface RepairMapper {
     As findRepairByAsNo(String asNo);
     boolean patchRepair(String asNo, As as);
     boolean createRepair(As as);
+    boolean deleteRepair(String asNo);
 }

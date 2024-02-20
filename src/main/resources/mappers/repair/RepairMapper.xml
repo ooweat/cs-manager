@@ -113,4 +113,7 @@
         IC_RV_SEQ        = #{as.icRvSeq}
     WHERE AS_NO = #{asNo}
   </update>
+  <delete id="deleteRepair" parameterType="string">
+    DELETE FROM TB_AS_LIST WHERE AS_NO = #{asNo}
+  </delete>
 </mapper>

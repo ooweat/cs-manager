@@ -48,7 +48,6 @@ public class RepairService {
     @Transactional
     public BaseResponse createRepair(As as) {
         As as2 = new As(makeAsNo(), as);
-        System.out.println(as2.getAsNo());
         if (repairMapper.createRepair(as2)) {
             return new BaseResponse(ResponseCode.SUCCESS_INSERT);
         } else {
@@ -61,5 +60,14 @@ public class RepairService {
         return LocalDateTime.now()
             .format(DateTimeFormatter.ofPattern("yyMMddHHmmss"))
             +String.format("%04d", (int)(Math.random()*100) + 1);
+    }
+    
+    @Transactional
+    public BaseResponse deleteRepair(String asNo) {
+        if (repairMapper.deleteRepair(asNo)) {
+            return new BaseResponse(ResponseCode.SUCCESS_REQUEST);
+        } else {
+            return new BaseResponse(ResponseCode.ERROR_REQUEST);
+        }
     }
 }
