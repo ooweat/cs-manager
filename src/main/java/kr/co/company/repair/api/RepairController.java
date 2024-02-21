@@ -1,6 +1,8 @@
 package kr.co.company.repair.api;
 
+import java.io.IOException;
 import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
 import kr.co.company.common.domain.BaseResponse;
 import kr.co.company.repair.application.RepairService;
 import kr.co.company.repair.application.dto.AsRequest;
@@ -52,5 +54,11 @@ public class RepairController {
     @DeleteMapping("/repairs/{asNo}")
     public ResponseEntity<BaseResponse> deleteRepair(@PathVariable final String asNo) {
         return ResponseEntity.ok(repairService.deleteRepair(asNo));
+    }
+    
+    @GetMapping("/repairs/excel")
+    public void findAllCommonSettingsTypeExcel(AsRequest asRequest, HttpServletResponse response)
+        throws IOException {
+        repairService.findAllByRequestExcel(asRequest, response);
     }
 }

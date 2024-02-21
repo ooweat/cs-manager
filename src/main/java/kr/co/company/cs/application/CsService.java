@@ -11,7 +11,6 @@ import kr.co.company.common.domain.PageNavigation;
 import kr.co.company.cs.application.dto.SettingRequest;
 import kr.co.company.cs.domain.CommonInfoType;
 import kr.co.company.cs.mappers.CsMapper;
-import kr.co.company.repair.domain.As;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +54,8 @@ public class CsService {
     public Map<String, Object> findAllCommonSettingsType(SettingRequest settingRequest) {
         Map<String, Object> response = new HashMap<>();
         PageHelper.startPage(settingRequest.getPage(), 10);
-        Page<CommonInfoType> list = (Page<CommonInfoType>) csMapper.findAllCommonSettingsType(settingRequest);
+        Page<CommonInfoType> list = (Page<CommonInfoType>) csMapper.findAllCommonSettingsType(
+            settingRequest);
         response.put("page", new PageNavigation(list));
         response.put("data", list);
         return response;

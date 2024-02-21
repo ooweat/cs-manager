@@ -54,11 +54,4 @@ public class CsController {
     public ResponseEntity<BaseResponse> createSetting(@RequestBody CommonInfoType commonInfoType) {
         return ResponseEntity.ok(csService.createSetting(commonInfoType));
     }
-    /*
-    *     @PostMapping(value = "/repair", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BaseResponse> createRepair(@RequestBody As as) {
-        return ResponseEntity.ok(repairService.createRepair(as));
-    }
-    *
-    * */
 }
