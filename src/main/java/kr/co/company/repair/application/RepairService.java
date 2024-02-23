@@ -12,12 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
+import kr.co.company.as.application.dto.SettingRequest;
 import kr.co.company.common.ResponseCode;
 import kr.co.company.common.domain.BaseResponse;
 import kr.co.company.common.domain.PageNavigation;
-import kr.co.company.cs.mappers.CsMapper;
+import kr.co.company.as.mappers.AsMapper;
 import kr.co.company.repair.application.dto.AsRequest;
-import kr.co.company.repair.domain.As;
+import kr.co.company.as.domain.As;
 import kr.co.company.repair.mappers.RepairMapper;
 import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -37,10 +38,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class RepairService {
     
     private final RepairMapper repairMapper;
-    private final CsMapper csMapper;
-    public RepairService(RepairMapper repairMapper, CsMapper csMapper) {
+    private final AsMapper asMapper;
+    public RepairService(RepairMapper repairMapper, AsMapper asMapper) {
         this.repairMapper = repairMapper;
-        this.csMapper = csMapper;
+        this.asMapper = asMapper;
     }
     
     public Map<String, Object> findAllByRequest(AsRequest asRequest) {
@@ -168,7 +169,7 @@ public class RepairService {
         
         XSSFRow headerRow = sheet.createRow(rowNo++);
         headerRow.setHeight((short) 512);
-        String[] pageheaderKey = {"페이지명", "보증기간관리"};
+        String[] pageheaderKey = {"페이지명", "단말기 이력관리"};
         
         XSSFCell headerCell = null;
         for (int i = 0; i < pageheaderKey.length; i++) {
@@ -275,7 +276,7 @@ public class RepairService {
         
         response.reset();
         response.setHeader("Content-Disposition",
-            "attachment;filename=" + URLEncoder.encode("보증기간관리.xlsx", "UTF-8"));
+            "attachment;filename=" + URLEncoder.encode("단말기 이력관리.xlsx", "UTF-8"));
         response.setContentType("application/vnd.ms-excel");
         out = new BufferedOutputStream(response.getOutputStream());
         

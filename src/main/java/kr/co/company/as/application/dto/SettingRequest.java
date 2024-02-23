@@ -1,4 +1,4 @@
-package kr.co.company.cs.application.dto;
+package kr.co.company.as.application.dto;
 
 import lombok.Getter;
 

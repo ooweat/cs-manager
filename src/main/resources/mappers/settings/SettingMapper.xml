@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.company.setting.mappers.SettingMapper">
+
+  <select id="findPartnerByCompSeq" parameterType="string"
+    resultType="kr.co.company.as.domain.CommonInfoType">
+    <if test="ptnCompSeq == '2000'">
+      SELECT COMPANY_SEQ AS seq,
+      USER_ORGANIZATION AS name
+      FROM TB_USER WHERE
+      USER_LEVEL='OP' AND COMPANY_SEQ <![CDATA[<>]]> '2000' GROUP BY COMPANY_SEQ, USER_ORGANIZATION
+      UNION ALL
+      SELECT COMPANY_SEQ AS seq,
+      USER_ORGANIZATION AS name
+      FROM TB_USER
+      WHERE USER_LEVEL='OP' AND USER_ID='ubcn'
+      GROUP BY COMPANY_SEQ, USER_ORGANIZATION
+      ORDER BY seq ASC
+    </if>
+    <if test="ptnCompSeq != '2000'">
+      SELECT COMPANY_SEQ AS seq,
+      USER_ORGANIZATION AS name
+      FROM TB_USER
+      WHERE
+      USER_LEVEL='OP' AND COMPANY_SEQ = #{ptnCompSeq}
+      GROUP BY COMPANY_SEQ, USER_ORGANIZATION
+    </if>
+  </select>
+  <select id="findAllTermialModel" resultType="kr.co.company.as.domain.CommonInfoType">
+    SELECT TID_SEQ        AS SEQ,
+           TID_MODEL_NAME AS NAME
+    FROM TB_TERMINAL_MODEL
+    ORDER BY TID_SEQ ASC
+  </select>
+  <select id="findAllRevision" resultType="kr.co.company.as.domain.CommonInfoType">
+    SELECT SEQ AS SEQ, NAME AS NAME, R_TYPE AS TYPE
+    FROM TB_REVISION
+    ORDER BY SEQ ASC
+  </select>
+  <select id="findAllError" parameterType="string"
+    resultType="kr.co.company.as.domain.CommonInfoType">
+    SELECT SEQ AS SEQ, NAME AS NAME, T_TYPE AS TYPE
+    FROM TB_ERROR
+    WHERE 1=1
+    <if test='errorType.equals("repair")'>
+      AND T_TYPE IN ('RT', 'RA')
+    </if>
+    <if test='errorType.equals("cs")'>
+      AND T_TYPE NOT IN ('RT', 'RA')
+    </if>
+    ORDER BY SEQ ASC
+  </select>
+  <select id="findAllCompany" resultType="kr.co.company.as.domain.CommonInfoType">
+    SELECT COMP_SEQ AS SEQ, COMP_NAME || '(' || BUSINESS_NO || ')' AS NAME
+    FROM TB_COMPANY
+    ORDER BY COMP_SEQ ASC
+  </select>
+  <select id="findAllUsers" resultType="kr.co.company.auth.domain.Member">
+    SELECT USER_SEQ AS SEQ,
+    USER_ID AS USERID,
+    USER_NAME AS USERNAME,
+    USER_LEVEL AS USERLEVEL,
+    COMP_NAME AS COMPANYNAME
+    FROM TB_USER
+    LEFT JOIN TB_COMPANY tc ON TB_USER.COMPANY_SEQ = tc.COMP_SEQ
+    WHERE 1=1
+    <if test="searchValue !=null">
+      AND USER_NAME LIKE '%' || #{searchValue} || '%'
+      OR USER_ID LIKE '%' || #{searchValue} || '%'
+      OR COMP_NAME LIKE '%' || #{searchValue} || '%'
+    </if>
+    ORDER BY REG_TIMESTAMP DESC, COMP_NAME ASC, USER_NAME ASC
+  </select>
+  <select id="findAllAs" resultType="kr.co.company.as.domain.CommonInfoType">
+    SELECT *
+    FROM (SELECT SEQ, T_TYPE AS TYPE, NAME AS NAME, CREATE_DATE AS CREATEDATE
+    FROM TB_ERROR
+    WHERE T_TYPE NOT IN ('RT', 'RA')
+    UNION
+    SELECT VM_SEQ AS SEQ, 'VM' AS TYPE, VM_MODEL_NAME AS NAME, VM_REG_TIMESTAMP AS CREATEDATE
+    FROM TB_VM_MODEL TVM
+    UNION
+    SELECT TID_SEQ AS SEQ, 'TERMINAL' AS TYPE, TID_MODEL_NAME AS NAME, TID_REGDATE AS CREATEDATE
+    FROM TB_TERMINAL_MODEL TTM) A
+    WHERE 1 = 1
+    <if test="searchValue !=null">
+      AND NAME LIKE '%' || #{searchValue} || '%'
+    </if>
+    ORDER BY TYPE DESC, NAME ASC
+  </select>
+  <select id="findAllCommonSettingsType" resultType="kr.co.company.as.domain.CommonInfoType">
+    SELECT *
+    FROM (SELECT SEQ, T_TYPE AS TYPE, NAME AS NAME, CREATE_DATE AS CREATEDATE
+    FROM TB_ERROR
+    UNION
+    SELECT VM_SEQ AS SEQ, 'VM' AS TYPE, VM_MODEL_NAME AS NAME, VM_REG_TIMESTAMP AS CREATEDATE
+    FROM TB_VM_MODEL TVM
+    UNION
+    SELECT TID_SEQ AS SEQ, 'TERMINAL' AS TYPE, TID_MODEL_NAME AS NAME, TID_REGDATE AS CREATEDATE
+    FROM TB_TERMINAL_MODEL TTM
+    UNION
+    SELECT SEQ, R_TYPE AS TYPE, NAME AS NAME, CREATE_DATE AS CREATEDATE
+    FROM TB_REVISION TR
+    ) A
+    WHERE 1=1
+    <if test="searchValue !=null">
+      AND NAME LIKE '%' || #{searchValue} || '%'
+    </if>
+    ORDER BY TYPE DESC, NAME ASC
+  </select>
+  <insert id="createSetting" parameterType="kr.co.company.as.domain.CommonInfoType">
+    <if test='type == "VM"'>
+      INSERT INTO TB_VM_MODEL (VM_SEQ, VM_MODEL_NAME)
+      VALUES (NEXTVAL('TB_VM_MODEL_SEQ'), #{name})
+    </if>
+    <if test='type == "TERMINAL"'>
+      INSERT INTO TB_TERMINAL_MODEL (TID_SEQ, TID_MODEL_NAME)
+      VALUES (NEXTVAL('TB_TID_MODEL_SEQ'), #{name})
+    </if>
+    <if test='type == "MN" or type == "SB" or type == "IC"'>
+      INSERT INTO TB_REVISION (SEQ, R_TYPE, NAME)
+      VALUES (NEXTVAL('TB_REVISION_SEQ'), #{type}, #{name})
+    </if>
+    <if test='type == "T" or type == "R" or type == "A"'>
+      INSERT INTO TB_ERROR (SEQ, T_TYPE, NAME)
+      VALUES (NEXTVAL('TB_ERROR_SEQ'), #{type}, #{name})
+    </if>
+  </insert>
+</mapper>

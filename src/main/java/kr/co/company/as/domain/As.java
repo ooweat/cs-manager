@@ -1,4 +1,4 @@
-package kr.co.company.repair.domain;
+package kr.co.company.cs.domain;
 
 import kr.co.company.common.domain.BaseTimeEntity;
 import lombok.Getter;
@@ -89,6 +89,7 @@ public class As extends BaseTimeEntity {
     private String icRvName;
     
     private String repairDate;
+    private String repairExpireDate;
     private int page;
     
     public As(String asNo, As as) {
@@ -150,5 +151,6 @@ public class As extends BaseTimeEntity {
         this.icRvName = as.getIcRvName();
         this.page = as.getPage();
         this.repairDate = as.getRepairDate();
+        this.repairExpireDate = as.getRepairExpireDate();
     }
 }

@@ -1,4 +1,4 @@
-package kr.co.company.cs.domain;
+package kr.co.company.as.domain;
 
 import kr.co.company.common.domain.BaseTimeEntity;
 import lombok.Getter;
