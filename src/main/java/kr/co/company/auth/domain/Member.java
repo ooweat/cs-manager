@@ -18,6 +18,7 @@ public class Member extends BaseTimeEntity {
     private String organization;    //부서
     private String userEmail;        //이메일
     private String userLevel;        //회원등급
+    private String companyName;
     
     /*private boolean isFirstLogin = true;
     private String token;*/

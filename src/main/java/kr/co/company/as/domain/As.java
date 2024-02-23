@@ -1,4 +1,4 @@
-package kr.co.company.cs.domain;
+package kr.co.company.as.domain;
 
 import kr.co.company.common.domain.BaseTimeEntity;
 import lombok.Getter;
@@ -47,6 +47,7 @@ public class As extends BaseTimeEntity {
     private String ptnComment;            //메모
     private String progressStatus;        //진행상태
     private int ptnCompSeq;        //이관사
+    private String ptnCompName;        //이관사
     
     private String transferCost;    //대행료 text
     private String vpTimestamp;    //방문예정일
@@ -122,6 +123,7 @@ public class As extends BaseTimeEntity {
         this.ptnComment = as.getPtnComment();
         this.progressStatus = as.getProgressStatus();
         this.ptnCompSeq = as.getPtnCompSeq();
+        this.ptnCompName = as.getPtnCompName();
         this.transferCost = as.getTransferCost();
         this.vpTimestamp = as.getVpTimestamp();
         this.cpTimestamp = as.getCpTimestamp();
