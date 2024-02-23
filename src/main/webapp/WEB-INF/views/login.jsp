@@ -32,7 +32,7 @@
             <div class="row">
                 <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
                     <div class="login-brand">
-                        <img src="/assets/img/logo/logo.png" alt="logo" class="mb-5 mt-2">
+                        <img src="" alt="logo" class="mb-5 mt-2">
                     </div>
 
                     <div class="card card-primary">
@@ -52,10 +52,10 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="d-block">
-                                        <label for="userPw" class="control-label">비밀번호</label>
+                                        <label for="userPass" class="control-label">비밀번호</label>
                                     </div>
-                                    <input id="userPw" type="password" class="form-control"
-                                           name="userPw"
+                                    <input id="userPass" type="password" class="form-control"
+                                           name="userPass"
                                            tabindex="2" placeholder="비밀번호" required>
                                     <div class="invalid-feedback">
                                         비밀번호를 입력하여 주세요.
@@ -71,7 +71,7 @@
                         </div>
                     </div>
                     <div class="simple-footer">
-                        Copyright &copy; ooweat
+                        Copyright &copy;
                     </div>
                 </div>
             </div>
@@ -87,7 +87,7 @@
         login();
       }
     });
-    $("#userPw").on("keyup", function (key) {
+    $("#userPass").on("keyup", function (key) {
       if (key.keyCode == 13) {
         login();
       }
@@ -99,16 +99,17 @@
     $.ajax({
       cache: false,
       type: "POST",
-      contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-      url: "/ajax/loginConfirm",
-      data: {
+      contentType: "application/json;",
+      url: "/api/auth/loginConfirm",
+      data: JSON.stringify({
         "userId": $('#userId').val(),
-        "userPw": $('#userPw').val(),
-      },
+        "userPass": $('#userPass').val(),
+      },),
       dataType: "json",
       success: function (cmd) {
         if (cmd.code == '0000') {
-          window.location.assign("/dashboard");
+          //window.location.assign("/dashboard");
+          window.location.assign("/repairs");
         } else {
           alert('아이디 또는 비밀번호가 다릅니다.');
           location.assign("/");
