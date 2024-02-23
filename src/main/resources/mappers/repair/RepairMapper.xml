@@ -3,7 +3,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.company.repair.mappers.RepairMapper">
   <select id="findAllByRequest" parameterType="kr.co.company.repair.application.dto.AsRequest"
-    resultType="kr.co.company.repair.domain.As">
+    resultType="kr.co.company.as.domain.As">
     SELECT * FROM (
     SELECT AS_NO AS ASNO,
     REG_TIMESTAMP AS CREATEDATE,
@@ -14,19 +14,18 @@
     CASE WHEN CID IS NULL THEN '-' ELSE CID END AS CID,
     CASE WHEN SAM_FLAG IS NULL THEN '-' ELSE SAM_FLAG END AS SAMFLAG,
     CASE WHEN TE.NAME IS NULL THEN '-' ELSE TE.NAME END AS TRBNAME,
-    CASE WHEN TE2.NAME IS NULL THEN '-' ELSE TE2.NAME END AS RTNAME,
-    CASE WHEN TE3.NAME IS NULL THEN '-' ELSE TE3.NAME END AS ATNAME,
+    CASE WHEN TE2.NAME IS NULL THEN '-' ELSE TE2.NAME END AS ATNAME,
     CASE WHEN TR.NAME IS NULL THEN '-' ELSE TR.NAME END AS MBRVNAME,
     CASE WHEN TR2.NAME IS NULL THEN '-' ELSE TR2.NAME END AS SBRVNAME,
     CASE WHEN TR3.NAME IS NULL THEN '-' ELSE TR3.NAME END AS ICRVNAME,
     REPAIR_DATE AS REPAIRDATE,
-    PTN_COMMENT                            AS PTNCOMMENT
+    REPAIR_EXPIRE_DATE AS REPAIREXPIREDATE,
+    PTN_COMMENT AS PTNCOMMENT
     FROM TB_AS_LIST LIST
     LEFT JOIN TB_COMPANY COMP ON LIST.COMP_SEQ = COMP.COMP_SEQ
     LEFT JOIN TB_TERMINAL_MODEL TM ON LIST.TID_SEQ = TM.TID_SEQ
-    LEFT JOIN TB_ERROR TE ON LIST.TRB_SEQ = TE.SEQ AND TE.T_TYPE = 'T'
-    LEFT JOIN TB_ERROR TE2 ON LIST.RT_SEQ = TE2.SEQ AND TE2.T_TYPE = 'R'
-    LEFT JOIN TB_ERROR TE3 ON LIST.AT_SEQ = TE3.SEQ AND TE3.T_TYPE = 'A'
+    LEFT JOIN TB_ERROR TE ON LIST.TRB_SEQ = TE.SEQ AND TE.T_TYPE = 'RT'
+    LEFT JOIN TB_ERROR TE2 ON LIST.AT_SEQ = TE2.SEQ AND TE2.T_TYPE = 'RA'
     LEFT JOIN TB_REVISION TR ON LIST.MAINBOARD_RV_SEQ = TR.SEQ AND TR.R_TYPE = 'MN'
     LEFT JOIN TB_REVISION TR2 ON LIST.SUBBOARD_RV_SEQ = TR2.SEQ AND TR2.R_TYPE = 'SB'
     LEFT JOIN TB_REVISION TR3 ON LIST.IC_RV_SEQ = TR3.SEQ AND TR3.R_TYPE = 'IC'
@@ -36,9 +35,9 @@
     </if>
     AND SUPPORT_TYPE = 'R'
     ) A
-    ORDER BY TRBNAME ASC, RTNAME ASC, ATNAME ASC, MBRVNAME ASC, SBRVNAME ASC, ICRVNAME ASC
+    ORDER BY TRBNAME ASC, ATNAME ASC, MBRVNAME ASC, SBRVNAME ASC, ICRVNAME ASC
   </select>
-  <select id="findRepairByAsNo" parameterType="String" resultType="kr.co.company.repair.domain.As">
+  <select id="findRepairByAsNo" parameterType="String" resultType="kr.co.company.as.domain.As">
     SELECT AS_BOARD_SEQ                           AS SEQ,
            AS_NO                                  AS ASNO,
            PTN_WRITER                             AS PTNWRITER,
@@ -52,10 +51,8 @@
            TERMINAL_ID                            AS TERMINALID,
            LIST.TRB_SEQ                           AS TRBSEQ,
            TE.NAME                                AS TRBNAME,
-           LIST.RT_SEQ                            AS RTSEQ,
-           TE2.NAME                               AS RTNAME,
            LIST.AT_SEQ                            AS ATSEQ,
-           TE3.NAME                               AS ATNAME,
+           TE2.NAME                               AS ATNAME,
            MAINBOARD_RV_SEQ                       AS MBRVSEQ,
            TR.NAME                                AS MBRVNAME,
            SUBBOARD_RV_SEQ                        AS SBRVSEQ,
@@ -64,57 +61,57 @@
            TR3.NAME                               AS ICRVNAME,
            PTN_COMMENT                            AS PTNCOMMENT,
            REPAIR_DATE                            AS REPAIRDATE,
+           REPAIR_EXPIRE_DATE                     AS REPAIREXPIREDATE,
            REG_TIMESTAMP                          AS CREATEDATE,
            MODIFY_TIMESTAMP                       AS MODIFYDATE
     FROM TB_AS_LIST LIST
            LEFT JOIN TB_COMPANY COMP ON LIST.COMP_SEQ = COMP.COMP_SEQ
            LEFT JOIN TB_TERMINAL_MODEL TM ON LIST.TID_SEQ = TM.TID_SEQ
-           LEFT JOIN TB_ERROR TE ON LIST.TRB_SEQ = TE.SEQ AND TE.T_TYPE = 'T'
-           LEFT JOIN TB_ERROR TE2 ON LIST.RT_SEQ = TE2.SEQ AND TE2.T_TYPE = 'R'
-           LEFT JOIN TB_ERROR TE3 ON LIST.AT_SEQ = TE3.SEQ AND TE3.T_TYPE = 'A'
+           LEFT JOIN TB_ERROR TE ON LIST.TRB_SEQ = TE.SEQ AND TE.T_TYPE = 'RT'
+           LEFT JOIN TB_ERROR TE2 ON LIST.AT_SEQ = TE2.SEQ AND TE2.T_TYPE = 'RA'
            LEFT JOIN TB_REVISION TR ON LIST.MAINBOARD_RV_SEQ = TR.SEQ AND TR.R_TYPE = 'MN'
            LEFT JOIN TB_REVISION TR2 ON LIST.SUBBOARD_RV_SEQ = TR2.SEQ AND TR2.R_TYPE = 'SB'
            LEFT JOIN TB_REVISION TR3 ON LIST.IC_RV_SEQ = TR3.SEQ AND TR3.R_TYPE = 'IC'
     WHERE AS_NO = #{asNo}
   </select>
-  <insert id="createRepair" parameterType="kr.co.company.repair.domain.As">
+  <insert id="createRepair" parameterType="kr.co.company.as.domain.As">
     INSERT INTO TB_AS_LIST (AS_BOARD_SEQ, AS_NO, PTN_WRITER, COMP_SEQ, CTM_NAME, CTM_PHONE,
                             CTM_PLACE_POST_CODE, CTM_PLACE_ADDRESS1, CTM_PLACE_ADDRESS2,
                             CTM_PLACE_NAME,
-                            CTM_CHARGE, TERMINAL_ID, VM_SEQ, TRB_SEQ, REPAIR_COST, PTN_COMMENT,
+                            CTM_CHARGE, TERMINAL_ID, VM_SEQ, REPAIR_COST, PTN_COMMENT,
                             PROGRESS_STATUS, READ_COUNT, PTN_IP, GROUP_NUM, SEQUENCE_NUM,
-                            SEQUENCE_LEVEL, REG_TIMESTAMP, RT_SEQ, AT_SEQ,
+                            SEQUENCE_LEVEL, REG_TIMESTAMP, TRB_SEQ, AT_SEQ,
                             MODIFY_USER, TID_SEQ, PTN_CP_DATE,
                             PTN_MEMO, CID, SERIAL_NO, SAM_FLAG, SUPPORT_TYPE, MAINBOARD_RV_SEQ,
-                            SUBBOARD_RV_SEQ, IC_RV_SEQ, REPAIR_DATE)
+                            SUBBOARD_RV_SEQ, IC_RV_SEQ, REPAIR_DATE, REPAIR_EXPIRE_DATE)
     VALUES (NEXTVAL('TB_AS_LIST_SEQ'), #{asNo}, #{ptnWriter}, #{compSeq}, #{compName}, '',
             '', '', '', '',
-            '', #{terminalId}, #{vmSeq}, #{trbSeq}, 0, #{ptnComment},
+            '', #{terminalId}, #{vmSeq}, 0, #{ptnComment},
             '1', 0, '', 0, 0, 0,
-            CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Seoul', #{rtSeq}, #{atSeq},
+            CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Seoul', #{trbSeq}, #{atSeq},
             #{modifyUser}, #{tidSeq}, #{ptnCpDate}, #{ptnMemo}, #{cid}, #{serialNo}, #{samFlag},
             'R',
-            #{mbRvSeq}, #{sbRvSeq}, #{icRvSeq}, #{repairDate})
+            #{mbRvSeq}, #{sbRvSeq}, #{icRvSeq}, #{repairDate}, #{repairExpireDate})
   </insert>
-  <update id="patchRepair" parameterType="kr.co.company.repair.domain.As">
+  <update id="patchRepair" parameterType="kr.co.company.as.domain.As">
     UPDATE TB_AS_LIST
-    SET COMP_SEQ         = #{as.compSeq},
-        CTM_NAME         = #{as.compName},
-        TERMINAL_ID      = #{as.terminalId},
-        TRB_SEQ          = #{as.trbSeq},
-        PTN_COMMENT      = #{as.ptnComment},
-        MODIFY_TIMESTAMP = CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Seoul',
-        RT_SEQ           = #{as.rtSeq},
-        AT_SEQ           = #{as.atSeq},
-        MODIFY_USER      = #{as.modifyUser},
-        TID_SEQ          = #{as.tidSeq},
-        CID              = #{as.cid},
-        SERIAL_NO        = #{as.serialNo},
-        SAM_FLAG         = #{as.samFlag},
-        MAINBOARD_RV_SEQ = #{as.mbRvSeq},
-        SUBBOARD_RV_SEQ  = #{as.sbRvSeq},
-        IC_RV_SEQ        = #{as.icRvSeq},
-        REPAIR_DATE      = #{as.repairDate}
+    SET COMP_SEQ           = #{as.compSeq},
+        CTM_NAME           = #{as.compName},
+        TERMINAL_ID        = #{as.terminalId},
+        PTN_COMMENT        = #{as.ptnComment},
+        MODIFY_TIMESTAMP   = CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Seoul',
+        TRB_SEQ            = #{as.trbSeq},
+        AT_SEQ             = #{as.atSeq},
+        MODIFY_USER        = #{as.modifyUser},
+        TID_SEQ            = #{as.tidSeq},
+        CID                = #{as.cid},
+        SERIAL_NO          = #{as.serialNo},
+        SAM_FLAG           = #{as.samFlag},
+        MAINBOARD_RV_SEQ   = #{as.mbRvSeq},
+        SUBBOARD_RV_SEQ    = #{as.sbRvSeq},
+        IC_RV_SEQ          = #{as.icRvSeq},
+        REPAIR_DATE        = #{as.repairDate},
+        REPAIR_EXPIRE_DATE = #{as.repairExpireDate}
     WHERE AS_NO = #{asNo}
   </update>
   <delete id="deleteRepair" parameterType="string">
