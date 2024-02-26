@@ -5,7 +5,7 @@ import com.github.pagehelper.PageHelper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import kr.co.company.as.application.dto.SettingRequest;
+import kr.co.company.setting.application.dto.SettingRequest;
 import kr.co.company.as.domain.CommonInfoType;
 import kr.co.company.auth.domain.Member;
 import kr.co.company.common.ResponseCode;
@@ -31,9 +31,9 @@ public class SettingService {
         return response;
     }
     
-    public Map<String, Object> findAllTermialModel() {
+    public Map<String, Object> findAllTerminalModel() {
         Map<String, Object> response = new HashMap<>();
-        List<CommonInfoType> list = settingMapper.findAllTermialModel();
+        List<CommonInfoType> list = settingMapper.findAllTerminalModel();
         response.put("data", list);
         return response;
     }
@@ -59,15 +59,6 @@ public class SettingService {
         return response;
     }
     
-    /*@Transactional
-    public BaseResponse createSetting(CommonInfoType commonInfoType) {
-        if (SettingMapper.createSetting(commonInfoType)) {
-            return new BaseResponse(ResponseCode.SUCCESS_INSERT);
-        } else {
-            return new BaseResponse(ResponseCode.ERROR_INSERT);
-        }
-    }*/
-    
     public Map<String, Object> findAllAs(SettingRequest settingRequest) {
         Map<String, Object> response = new HashMap<>();
         PageHelper.startPage(settingRequest.getPage(), 10);
@@ -91,19 +82,19 @@ public class SettingService {
     public Map<String, Object> findAllRepairs(SettingRequest settingRequest) {
         Map<String, Object> response = new HashMap<>();
         PageHelper.startPage(settingRequest.getPage(), 10);
-        Page<CommonInfoType> list = (Page<CommonInfoType>) settingMapper.findAllAs(
+        Page<CommonInfoType> list = (Page<CommonInfoType>) settingMapper.findAllRepairs(
             settingRequest);
         response.put("page", new PageNavigation(list));
         response.put("data", list);
         return response;
     }
     
-    /*@Transactional
+    @Transactional
     public BaseResponse createSetting(CommonInfoType commonInfoType) {
         if (settingMapper.createSetting(commonInfoType)) {
             return new BaseResponse(ResponseCode.SUCCESS_INSERT);
         } else {
             return new BaseResponse(ResponseCode.ERROR_INSERT);
         }
-    }*/
+    }
 }

@@ -1,11 +1,17 @@
 package kr.co.company.setting.api;
 
 import java.util.Map;
-import kr.co.company.as.application.dto.SettingRequest;
+import kr.co.company.setting.application.dto.SettingRequest;
+import kr.co.company.as.domain.CommonInfoType;
+import kr.co.company.common.domain.BaseResponse;
 import kr.co.company.setting.application.SettingService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,14 +44,9 @@ public class SettingController {
         return ResponseEntity.ok(settingService.findPartnerByCompSeq(ptnCompSeq));
     }
     
-    @GetMapping(value = "/as")
-    public ResponseEntity<Map> afterSales() {
-        return ResponseEntity.ok(settingService.findAllTermialModel());
-    }
-    
     @GetMapping("/terminal-models")
     public ResponseEntity<Map> terminalModels() {
-        return ResponseEntity.ok(settingService.findAllTermialModel());
+        return ResponseEntity.ok(settingService.findAllTerminalModel());
     }
     
     @GetMapping("/revisions")
@@ -61,5 +62,17 @@ public class SettingController {
     @GetMapping("/companys")
     public ResponseEntity<Map> findAllCompany() {
         return ResponseEntity.ok(settingService.findAllCompany());
+    }
+    
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BaseResponse> createSetting(@RequestBody CommonInfoType commonInfoType) {
+        return ResponseEntity.ok(settingService.createSetting(commonInfoType));
+    }
+    
+    @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BaseResponse> deleteSetting(@RequestBody SettingRequest settingRequest) {
+        System.out.println(settingRequest.getSettingType());
+        return null;
+        //return ResponseEntity.ok(settingService.deleteSetting(asNo));
     }
 }
