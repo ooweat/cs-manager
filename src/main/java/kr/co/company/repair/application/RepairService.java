@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
-import kr.co.company.as.application.dto.SettingRequest;
 import kr.co.company.common.ResponseCode;
 import kr.co.company.common.domain.BaseResponse;
 import kr.co.company.common.domain.PageNavigation;
