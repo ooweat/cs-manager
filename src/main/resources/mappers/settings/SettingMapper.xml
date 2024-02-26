@@ -27,7 +27,7 @@
       GROUP BY COMPANY_SEQ, USER_ORGANIZATION
     </if>
   </select>
-  <select id="findAllTermialModel" resultType="kr.co.company.as.domain.CommonInfoType">
+  <select id="findAllTerminalModel" resultType="kr.co.company.as.domain.CommonInfoType">
     SELECT TID_SEQ        AS SEQ,
            TID_MODEL_NAME AS NAME
     FROM TB_TERMINAL_MODEL
@@ -89,6 +89,20 @@
     </if>
     ORDER BY TYPE DESC, NAME ASC
   </select>
+  <select id="findAllRepairs" resultType="kr.co.company.as.domain.CommonInfoType">
+    SELECT *
+    FROM (SELECT SEQ, T_TYPE AS TYPE, NAME AS NAME, CREATE_DATE AS CREATEDATE
+    FROM TB_ERROR
+    WHERE T_TYPE IN ('RT', 'RA')
+    UNION
+    SELECT SEQ, R_TYPE AS TYPE, NAME AS NAME, CREATE_DATE AS CREATEDATE
+    FROM TB_REVISION TR) A
+    WHERE 1 = 1
+    <if test="searchValue !=null">
+      AND NAME LIKE '%' || #{searchValue} || '%'
+    </if>
+    ORDER BY TYPE DESC, NAME ASC
+  </select>
   <select id="findAllCommonSettingsType" resultType="kr.co.company.as.domain.CommonInfoType">
     SELECT *
     FROM (SELECT SEQ, T_TYPE AS TYPE, NAME AS NAME, CREATE_DATE AS CREATEDATE
@@ -122,7 +136,7 @@
       INSERT INTO TB_REVISION (SEQ, R_TYPE, NAME)
       VALUES (NEXTVAL('TB_REVISION_SEQ'), #{type}, #{name})
     </if>
-    <if test='type == "T" or type == "R" or type == "A"'>
+    <if test='type == "RT" or type == "RA" or type == "CT" or type == "CR" or type == "CA"'>
       INSERT INTO TB_ERROR (SEQ, T_TYPE, NAME)
       VALUES (NEXTVAL('TB_ERROR_SEQ'), #{type}, #{name})
     </if>
