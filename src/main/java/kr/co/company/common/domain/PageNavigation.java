@@ -16,6 +16,7 @@ public class PageNavigation {
     private Page<?> page;
     private String path;
     private int pages;
+    private long total;
     
     public PageNavigation(Page<?>page){
         this.page = page;
@@ -25,6 +26,7 @@ public class PageNavigation {
         this.endPage = startPage + naviSize - 1;
         this.pageNum = page.getPageNum();
         this.pages = page.getPages();
+        this.total = page.getTotal();
         if (page.getPages() < endPage) {
             endPage = page.getPages();
         }
