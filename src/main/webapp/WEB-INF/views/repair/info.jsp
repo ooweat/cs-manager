@@ -45,6 +45,7 @@
             $('#compSeq').prepend(
                 '<option value="' + cmd.compSeq + '" selected=selected>' + cmd.compName
                 + '</option>');
+            cmd.ptnCompSeq == null ? $("#ptnCompSeq").val('Y').trigger('change') : $("#ptnCompSeq").val(cmd.ptnCompSeq).trigger('change');
             $('#serialNo').val(cmd.serialNo);
             $('#cid').val(cmd.cid);
             cmd.samFlag == null ? $("#samFlag").val('Y').trigger('change') : $("#samFlag").val(cmd.samFlag).trigger('change');
@@ -72,7 +73,7 @@
       function callCompany() {
         $.ajax({
           type: "GET",
-          url: "/api/as/companys",
+          url: "/api/settings/companys",
           cache: false,
           success: function (cmd) {
             if (cmd.data.length > 0) {
@@ -92,7 +93,7 @@
       function callPartners() {
         $.ajax({
           type: "GET",
-          url: "/api/as/partners/${member.companySeq}",
+          url: "/api/settings/partners/${member.companySeq}",
           cache: false,
           success: function (cmd) {
             if (cmd.data.length > 0) {
@@ -112,7 +113,7 @@
       function callTerminalModel() {
         $.ajax({
           type: "GET",
-          url: "/api/as/terminal-models",
+          url: "/api/settings/terminal-models",
           cache: false,
           success: function (cmd) {
             if (cmd.data.length > 0) {
@@ -133,7 +134,7 @@
       function callRevision() {
         $.ajax({
           type: "GET",
-          url: "/api/as/revisions",
+          url: "/api/settings/revisions",
           cache: false,
           success: function (cmd) {
             if (cmd.data.length > 0) {
@@ -162,7 +163,7 @@
       function callError() {
         $.ajax({
           type: "GET",
-          url: "/api/as/errors/repair",
+          url: "/api/settings/errors/repair",
           cache: false,
           success: function (cmd) {
             if (cmd.data.length > 0) {
@@ -186,14 +187,21 @@
       }
 
       function _confirm(methodType) {
-        if ($('#compSeq').val() == '') {
+        if ($('#compSeq').val() == '0') {
           alert('발송처를 선택해주세요.');
           $('#compSeq').focus();
           return;
         }
-        if ($('#terminalId').val() == '') {
-          alert('TID를 입력해주세요.');
-          $('#terminalId').focus();
+
+        if ($('#ptnCompSeq').val() == '0') {
+          alert('협력사를 선택해주세요.');
+          $('#ptnCompSeq').focus();
+          return;
+        }
+
+        if ($('#cid').val() == '') {
+          alert('CID를 입력해주세요.');
+          $('#cid').focus();
           return;
         }
         switch (methodType) {
@@ -206,6 +214,7 @@
                 dataType: "json",
                 data: JSON.stringify({
                   "compSeq": $('#compSeq').val(),
+                  "ptnCompSeq": $('#ptnCompSeq').val(),
                   "repairDate": $('#repairDate').val(),
                   "repairExpireDate": $('#repairExpireDate').val(),
                   "compName": $('#compSeq :selected').text(),
@@ -246,6 +255,7 @@
                 dataType: "json",
                 data: JSON.stringify({
                   "compSeq": $('#compSeq').val(),
+                  "ptnCompSeq": $('#ptnCompSeq').val(),
                   "repairDate": $('#repairDate').val(),
                   "repairExpireDate": $('#repairExpireDate').val(),
                   "compName": $('#compSeq :selected').text(),
@@ -316,7 +326,7 @@
                             </div>
                             <div class="row">
                                 <div class="form-group col-lg-6 col-md-12 col-sm-12">
-                                    <label for="compSeq">발송처</label>
+                                    <label for="compSeq">*발송처</label>
                                     <select id="compSeq" name="compSeq"
                                             class="form-control select2 select2-hidden-accessible"
                                             tabindex="-1" aria-hidden="true">
@@ -324,7 +334,7 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-lg-3 col-md-6 col-sm-6">
-                                    <label for="ptnCompSeq">협력사</label>
+                                    <label for="ptnCompSeq">*협력사</label>
                                     <select id="ptnCompSeq" name="ptnCompSeq"
                                             class="form-control select2 select2-hidden-accessible"
                                             tabindex="-1" aria-hidden="true">
@@ -349,7 +359,7 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-lg-3 col-md-4 col-sm-6">
-                                    <label for="cid">CID</label>
+                                    <label for="cid">*CID</label>
                                     <input id="cid" type="text" class="form-control" name="cid"
                                            placeholder="CID" required="" autofocus=""
                                            maxlength="8">

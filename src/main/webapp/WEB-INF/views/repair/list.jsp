@@ -82,7 +82,7 @@
           cache: false,
           success: function (cmd) {
             console.log(cmd);
-            $('#searchCount').text("(" + numberWithCommas(cmd.data.length) + "건)");
+            $('#searchCount').text("(" + numberWithCommas(cmd.page.total) + "건)");
             let html = '';
             if (cmd.data.length > 0) {
               for (let i = 0; i < cmd.data.length; i++) {
@@ -100,7 +100,7 @@
                 html += '<td class="text-center">' + cmd.data[i].repairExpireDate + '</td>';
                 html += '<td class="text-center">' + cmd.data[i].cid + '</td>';
                 html += '<td class="text-left">' + cmd.data[i].compName + '</td>';
-                html += '<td class="text-left">' + cmd.data[i].compName + '</td>';
+                html += '<td class="text-left">' + cmd.data[i].ptnCompName + '</td>';
                 html += '<td class="text-center">' + cmd.data[i].tidModelName + '</td>';
                 html += '<td class="text-center">' + cmd.data[i].terminalId + '</td>';
                 html += '<td class="text-left">' + cmd.data[i].trbName + '</td>';
@@ -243,6 +243,7 @@
                                 <h6 class="pt-0">조회결과 <span class="text-muted"
                                                             id="searchCount"></span>
                                 </h6>
+                                <code>※요청된 정렬순서: 불량내역, 수리내역, 메인REV, 서브REV, ICREV</code>
                             </div>
                             <div class="float-right">
                                 <button class="btn btn-primary" onclick="excelDownload('repairs');">

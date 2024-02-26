@@ -39,6 +39,7 @@ public class RepairService {
     
     private final RepairMapper repairMapper;
     private final AsMapper asMapper;
+    
     public RepairService(RepairMapper repairMapper, AsMapper asMapper) {
         this.repairMapper = repairMapper;
         this.asMapper = asMapper;
@@ -192,9 +193,9 @@ public class RepairService {
         headerRow = sheet.createRow(rowNo++);
         headerRow.setHeight((short) 212);
         
-        String[] headerKey = {"보증시작일자", "발송처", "단말기모델", "TID",
-            "Serial", "CID", "SAM유무", "고장증상", "확인증상",
-            "조치사항", "메인보드RV", "서브보드RV", "IC모듈RV", "비고"
+        String[] headerKey = {"처리일자", "보증만료일자", "CID", "발송처", "협력사",
+            "단말기모델", "TID", "Serial", "SAM유무", "불량내역",
+            "수리내역", "메인REV", "서브REV", "ICREV", "비고"
         };
         
         headerRow.setHeight((short) 512);
@@ -216,14 +217,26 @@ public class RepairService {
             
             bodyRow = sheet.createRow(rowNo++);
             colno = 0;
-            
+    
             bodyCell = bodyRow.createCell(colno++);
             bodyCell.setCellStyle(bodyStyle);
             bodyCell.setCellValue(list.get(i).getRepairDate());
+    
+            bodyCell = bodyRow.createCell(colno++);
+            bodyCell.setCellStyle(bodyStyle);
+            bodyCell.setCellValue(list.get(i).getRepairExpireDate());
             
             bodyCell = bodyRow.createCell(colno++);
             bodyCell.setCellStyle(bodyStyle);
+            bodyCell.setCellValue(list.get(i).getCid());
+    
+            bodyCell = bodyRow.createCell(colno++);
+            bodyCell.setCellStyle(bodyStyle);
             bodyCell.setCellValue(list.get(i).getCompName());
+    
+            bodyCell = bodyRow.createCell(colno++);
+            bodyCell.setCellStyle(bodyStyle);
+            bodyCell.setCellValue(list.get(i).getPtnCompName());
             
             bodyCell = bodyRow.createCell(colno++);
             bodyCell.setCellStyle(bodyStyle);
@@ -239,19 +252,11 @@ public class RepairService {
             
             bodyCell = bodyRow.createCell(colno++);
             bodyCell.setCellStyle(bodyStyle);
-            bodyCell.setCellValue(list.get(i).getCid());
-            
-            bodyCell = bodyRow.createCell(colno++);
-            bodyCell.setCellStyle(bodyStyle);
             bodyCell.setCellValue(list.get(i).getSamFlag() == 'Y' ? "있음" : "없음");
             
             bodyCell = bodyRow.createCell(colno++);
             bodyCell.setCellStyle(bodyStyle);
             bodyCell.setCellValue(list.get(i).getTrbName());
-            
-            bodyCell = bodyRow.createCell(colno++);
-            bodyCell.setCellStyle(bodyStyle);
-            bodyCell.setCellValue(list.get(i).getRtName());
             
             bodyCell = bodyRow.createCell(colno++);
             bodyCell.setCellStyle(bodyStyle);
