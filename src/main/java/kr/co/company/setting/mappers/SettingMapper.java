@@ -17,4 +17,5 @@ public interface SettingMapper {
     List<CommonInfoType> findAllAs(SettingRequest searchRequest);
     List<CommonInfoType> findAllRepairs(SettingRequest searchRequest);
     boolean createSetting(CommonInfoType commonInfoType);
+    boolean deleteSetting(SettingRequest settingRequest);
 }

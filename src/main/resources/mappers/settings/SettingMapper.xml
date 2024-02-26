@@ -141,4 +141,18 @@
       VALUES (NEXTVAL('TB_ERROR_SEQ'), #{type}, #{name})
     </if>
   </insert>
+  <delete id="deleteSetting">
+    <if test='settingType == "VM"'>
+      DELETE FROM TB_VM_MODEL WHERE VM_SEQ = #{seq}
+    </if>
+    <if test='settingType == "TERMINAL"'>
+      DELETE FROM TB_TERMINAL_MODEL WHERE TID_SEQ = #{seq}
+    </if>
+    <if test='settingType == "MN" or settingType == "SB" or settingType == "IC"'>
+      DELETE FROM TB_REVISION WHERE SEQ = #{seq}
+    </if>
+    <if test='settingType == "RT" or settingType == "RA" or settingType == "CT" or settingType == "CR" or settingType == "CA"'>
+      DELETE FROM TB_ERROR WHERE T_TYPE = #{settingType} AND SEQ = #{seq}
+    </if>
+  </delete>
 </mapper>

@@ -1,6 +1,7 @@
 package kr.co.company.setting.api;
 
 import java.util.Map;
+import kr.co.company.auth.domain.Member;
 import kr.co.company.setting.application.dto.SettingRequest;
 import kr.co.company.as.domain.CommonInfoType;
 import kr.co.company.common.domain.BaseResponse;
@@ -71,8 +72,6 @@ public class SettingController {
     
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BaseResponse> deleteSetting(@RequestBody SettingRequest settingRequest) {
-        System.out.println(settingRequest.getSettingType());
-        return null;
-        //return ResponseEntity.ok(settingService.deleteSetting(asNo));
+        return ResponseEntity.ok(settingService.deleteSetting(settingRequest));
     }
 }

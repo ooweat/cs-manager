@@ -97,4 +97,12 @@ public class SettingService {
             return new BaseResponse(ResponseCode.ERROR_INSERT);
         }
     }
+    @Transactional
+    public BaseResponse deleteSetting(SettingRequest settingRequest) {
+        if (settingMapper.deleteSetting(settingRequest)) {
+            return new BaseResponse(ResponseCode.SUCCESS_REQUEST);
+        } else {
+            return new BaseResponse(ResponseCode.ERROR_REQUEST);
+        }
+    }
 }
