@@ -204,7 +204,7 @@ table.loading tbody:after {
 }
 
 .text-decoration-trash{
-    text-decoration:line-through;
+    text-decoration:line-through !important;
 }
 
 .text-fw-bold{font-weight: bold;}
