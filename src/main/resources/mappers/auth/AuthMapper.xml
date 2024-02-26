@@ -4,9 +4,9 @@
 <mapper namespace="kr.co.company.auth.mappers.AuthMapper">
   <select id="findByUserId" parameterType="string"
     resultType="boolean">
-    SELECT IF(COUNT(*) = 1, 1, 0)
+    SELECT CASE WHEN COUNT(*) = 1 THEN 1 ELSE 0 END
     FROM TB_USER
-    WHERE ID = #{userId}
+    WHERE USER_ID = #{userId}
   </select>
   <update id="save" parameterType="kr.co.company.auth.domain.Member">
     INSERT INTO TB_USER
@@ -42,4 +42,20 @@
     WHERE USER_ID = #{userId}
       AND USER_PASSWORD = #{userPass}
   </select>
+  <insert id="createUser" parameterType="kr.co.company.auth.domain.Member">
+    INSERT INTO TB_USER
+    (USER_SEQ, COMPANY_SEQ, USER_ORGANIZATION, USER_ID, USER_PASSWORD, USER_NAME, USER_LEVEL,
+    USER_PHONE, USER_EMAIL, REG_TIMESTAMP)
+    VALUES (NEXTVAL('TB_USER_SEQ'),
+    <choose>
+      <when test='userLevel.equals("OP")'>
+        nextval('TB_PARTNER_SEQ'),
+      </when>
+      <otherwise>
+        #{companySeq},
+      </otherwise>
+    </choose>
+    #{organization}, #{userId}, '1234', #{userName},
+    #{userLevel}, #{userPhone}, #{userEmail}, CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Seoul')
+  </insert>
 </mapper>

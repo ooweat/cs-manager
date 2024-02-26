@@ -18,15 +18,6 @@ public class AuthService {
         this.authMapper = authMapper;
     }
     
-    @Transactional
-    public void save(Member member) throws Exception {
-        if (authMapper.findByUserId(member.getUserId())) {
-            throw new Exception("이미 존재하는 아이디입니다.");
-        }
-        
-        authMapper.save(member);
-    }
-    
     public BaseResponse login(LoginRequest loginRequest, HttpSession session) {
         Member member = authMapper.findAllByMember(loginRequest.getUserId(),
             loginRequest.getUserPass());
@@ -36,6 +27,19 @@ public class AuthService {
         } else {
             session.invalidate();
             return new BaseResponse(ResponseCode.FAIL_LOGIN);
+        }
+    }
+    
+    @Transactional
+    public BaseResponse createUser(Member member) {
+        if (authMapper.findByUserId(member.getUserId())) {
+            return new BaseResponse(ResponseCode.ALREADY_DATA);
+        }
+        
+        if (authMapper.createUser(member)) {
+            return new BaseResponse(ResponseCode.SUCCESS_INSERT);
+        } else {
+            return new BaseResponse(ResponseCode.ERROR_INSERT);
         }
     }
 }

@@ -8,4 +8,5 @@ public interface AuthMapper {
     Member findAllByMember(String userId, String userPass);
     boolean findByUserId(String userId);
     void save(Member member);
+    boolean createUser(Member member);
 }
