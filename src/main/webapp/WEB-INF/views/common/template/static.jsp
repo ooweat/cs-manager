@@ -75,33 +75,12 @@
             <ul class="sidebar-menu">
                 <%--멤버십--%>
                 <li class="menu-header">고객지원 서비스</li>
-                <li class="nav-item"><a class="nav-link" href="#"><i
-                        class="far fa-clipboard"></i> <span>Dashboard(샘플)</span></a></li>
-                <%--<li class="nav-item dropdown">
-                    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
-                        <i class="fas fa-tools"></i>
-                        <span>A/S(샘플)</span></a>
-                    <ul class="dropdown-menu" style="display: none;">
-                        <li><a class="nav-link"
-                               href="#">접수</a></li>
-                        <li><a class="nav-link"
-                               href="#">접수내역</a></li>
-                        <c:if test="${role!='system'}">
-                            <c:if test="${role=='system' || useCouponConfig eq 'Y'.charAt(0)}">
-                                <li><a class="nav-link"
-                                       href="/coupon/config?paramGroupSeq=${groupSeq}">A/S</a></li>
-                            </c:if>
-                        </c:if>
-                        <c:if test="${role=='system' || useCouponIssuanceHistory eq 'Y'.charAt(0)}">
-                            <li><a class="nav-link" href="/coupon/issuance">쿠폰발권내역</a></li>
-                        </c:if>
-                        <c:if test="${role=='system' || useCouponSalesHistory eq 'Y'.charAt(0)}">
-                            <li><a class="nav-link" href="/coupon/sales">쿠폰사용내역</a></li>
-                        </c:if>
-                    </ul>
-                </li>--%>
+                <li class="nav-item"><a class="nav-link text-decoration-trash" href="#"
+                                        onclick="alert('이관 준비 중인 서비스입니다.');">
+                    <i class="far fa-clipboard"></i> <span>Dashboard(샘플)</span></a></li>
                 <li class="nav-item dropdown">
-                    <a href="/as" class="nav-link">
+                    <a href="#" class="nav-link text-decoration-trash"
+                       onclick="alert('이관 준비 중인 서비스입니다.');">
                         <i class="fas fa-tools"></i>
                         <span>AS 접수내역</span></a>
                 </li>
@@ -110,25 +89,28 @@
                         <i class="fas fa-toolbox"></i>
                         <span>단말기 이력관리</span></a>
                 </li>
-                    <li class="nav-item dropdown">
-                        <a href="/users" class="nav-link">
-                            <i class="fas fa-user"></i>
-                            <span>사용자 관리</span></a>
-                    </li>
                 <li class="nav-item dropdown">
                     <a href="/settings" class="nav-link">
                         <i class="fas fa-cog"></i>
                         <span>설정</span></a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
+                    <a href="#" class="nav-link text-decoration-trash"
+                       onclick="alert('이관 준비 중인 서비스입니다.');">
+                        <i class="fas fa-user"></i>
+                        <span>사용자 관리</span></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link has-dropdown text-decoration-trash"
+                       data-toggle="dropdown" onclick="alert('이관 준비 중인 서비스입니다.');">
                         <i class="fas fa-toolbox"></i>
                         <span>공지사항(샘플)</span></a>
                     <ul class="dropdown-menu" style="display: none;">
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
+                    <a href="#" class="nav-link has-dropdown text-decoration-trash"
+                       data-toggle="dropdown" onclick="alert('이관 준비 중인 서비스입니다.');">
                         <i class="fas fa-toolbox"></i>
                         <span>HCE인증관리(샘플)</span></a>
                     <ul class="dropdown-menu" style="display: none;">
