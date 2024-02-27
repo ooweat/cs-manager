@@ -57,20 +57,26 @@
     ORDER BY COMP_SEQ ASC
   </select>
   <select id="findAllUsers" resultType="kr.co.company.auth.domain.Member">
-    SELECT USER_SEQ AS SEQ,
-    USER_ID AS USERID,
-    USER_NAME AS USERNAME,
-    USER_LEVEL AS USERLEVEL,
-    COMP_NAME AS COMPANYNAME
+    SELECT TU.USER_SEQ AS SEQ,
+    TU.USER_ID AS USERID,
+    TU.USER_NAME AS USERNAME,
+    TU.USER_LEVEL AS USERLEVEL,
+    TU2.USER_ORGANIZATION AS COMPANYNAME
+    FROM TB_USER TU
+    LEFT JOIN
+    (SELECT COMPANY_SEQ, USER_LEVEL, USER_ORGANIZATION
     FROM TB_USER
-    LEFT JOIN TB_COMPANY tc ON TB_USER.COMPANY_SEQ = tc.COMP_SEQ
+    WHERE USER_LEVEL = 'OP'
+    AND USER_NAME != 'PC클리닉(서울경기)'
+    GROUP BY COMPANY_SEQ, USER_LEVEL, USER_ORGANIZATION) TU2
+    ON TU.COMPANY_SEQ = TU2.COMPANY_SEQ
     WHERE 1=1
     <if test="searchValue !=null">
-      AND USER_NAME LIKE '%' || #{searchValue} || '%'
-      OR USER_ID LIKE '%' || #{searchValue} || '%'
-      OR COMP_NAME LIKE '%' || #{searchValue} || '%'
+      AND TU.USER_NAME LIKE '%' || #{searchValue} || '%'
+      OR TU.USER_ID LIKE '%' || #{searchValue} || '%'
+      OR TU2.USER_ORGANIZATION LIKE '%' || #{searchValue} || '%'
     </if>
-    ORDER BY REG_TIMESTAMP DESC, COMP_NAME ASC, USER_NAME ASC
+    ORDER BY TU.REG_TIMESTAMP DESC, TU.USER_NAME ASC
   </select>
   <select id="findAllAs" resultType="kr.co.company.as.domain.CommonInfoType">
     SELECT *

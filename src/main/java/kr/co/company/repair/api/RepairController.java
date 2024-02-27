@@ -6,8 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import kr.co.company.as.domain.As;
 import kr.co.company.common.domain.BaseResponse;
 import kr.co.company.repair.application.RepairService;
-import kr.co.company.repair.application.dto.AsRequest;
-import lombok.extern.slf4j.Slf4j;
+import kr.co.company.repair.application.dto.RepairRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/")
 public class RepairController {
@@ -31,8 +29,9 @@ public class RepairController {
     }
     
     @GetMapping(value = "/repairs")
-    public ResponseEntity<Map> repairs(AsRequest asRequest) {
-        return ResponseEntity.ok(repairService.findAllByRequest(asRequest));
+    public ResponseEntity<Map> repairs(RepairRequest repairRequest) {
+        System.out.println(repairRequest.getSDate());
+        return ResponseEntity.ok(repairService.findAllByRequest(repairRequest));
     }
     
     @GetMapping("/repairs/{asNo}")
@@ -57,8 +56,8 @@ public class RepairController {
     }
     
     @GetMapping("/repairs/excel")
-    public void findAllCommonSettingsTypeExcel(AsRequest asRequest, HttpServletResponse response)
+    public void findAllCommonSettingsTypeExcel(RepairRequest repairRequest, HttpServletResponse response)
         throws IOException {
-        repairService.findAllByRequestExcel(asRequest, response);
+        repairService.findAllByRequestExcel(repairRequest, response);
     }
 }

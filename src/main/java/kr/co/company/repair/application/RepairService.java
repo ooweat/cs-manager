@@ -16,7 +16,7 @@ import kr.co.company.common.ResponseCode;
 import kr.co.company.common.domain.BaseResponse;
 import kr.co.company.common.domain.PageNavigation;
 import kr.co.company.as.mappers.AsMapper;
-import kr.co.company.repair.application.dto.AsRequest;
+import kr.co.company.repair.application.dto.RepairRequest;
 import kr.co.company.as.domain.As;
 import kr.co.company.repair.mappers.RepairMapper;
 import org.apache.poi.hssf.util.CellRangeAddress;
@@ -44,10 +44,10 @@ public class RepairService {
         this.asMapper = asMapper;
     }
     
-    public Map<String, Object> findAllByRequest(AsRequest asRequest) {
+    public Map<String, Object> findAllByRequest(RepairRequest repairRequest) {
         Map<String, Object> response = new HashMap<>();
-        PageHelper.startPage(asRequest.getPage(), 10);
-        Page<As> list = (Page<As>) repairMapper.findAllByRequest(asRequest);
+        PageHelper.startPage(repairRequest.getPage(), 10);
+        Page<As> list = (Page<As>) repairMapper.findAllByRequest(repairRequest);
         response.put("page", new PageNavigation(list));
         response.put("data", list);
         return response;
@@ -91,7 +91,7 @@ public class RepairService {
         }
     }
     
-    public void findAllByRequestExcel(AsRequest asRequest, HttpServletResponse response)
+    public void findAllByRequestExcel(RepairRequest repairRequest, HttpServletResponse response)
         throws IOException {
         OutputStream out = null;
         XSSFWorkbook workbook = new XSSFWorkbook();
@@ -192,7 +192,7 @@ public class RepairService {
         headerRow = sheet.createRow(rowNo++);
         headerRow.setHeight((short) 212);
         
-        String[] headerKey = {"처리일자", "보증만료일자", "CID", "발송처", "협력사",
+        String[] headerKey = {"등록일자", "처리일자", "보증만료일자", "CID", "발송처", "협력사",
             "단말기모델", "TID", "Serial", "SAM유무", "불량내역",
             "수리내역", "메인REV", "서브REV", "ICREV", "비고"
         };
@@ -210,13 +210,17 @@ public class RepairService {
         XSSFRow bodyRow = null;
         XSSFCell bodyCell = null;
         int colno = 0;
-        List<As> list = repairMapper.findAllByRequest(asRequest);
+        List<As> list = repairMapper.findAllByRequest(repairRequest);
         for (int i = 0; i < list.size(); i++) {
             //vm = list.get(i);
             
             bodyRow = sheet.createRow(rowNo++);
             colno = 0;
     
+            bodyCell = bodyRow.createCell(colno++);
+            bodyCell.setCellStyle(bodyStyle);
+            bodyCell.setCellValue(list.get(i).getCreateDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            
             bodyCell = bodyRow.createCell(colno++);
             bodyCell.setCellStyle(bodyStyle);
             bodyCell.setCellValue(list.get(i).getRepairDate());
@@ -280,7 +284,7 @@ public class RepairService {
         
         response.reset();
         response.setHeader("Content-Disposition",
-            "attachment;filename=" + URLEncoder.encode("단말기 이력관리.xlsx", "UTF-8"));
+            "attachment;filename=" + URLEncoder.encode("단말기_이력관리.xlsx", "UTF-8"));
         response.setContentType("application/vnd.ms-excel");
         out = new BufferedOutputStream(response.getOutputStream());
         

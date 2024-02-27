@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.company.repair.mappers.RepairMapper">
-  <select id="findAllByRequest" parameterType="kr.co.company.repair.application.dto.AsRequest"
+  <select id="findAllByRequest" parameterType="kr.co.company.repair.application.dto.RepairRequest"
     resultType="kr.co.company.as.domain.As">
     SELECT * FROM (
     SELECT AS_NO AS ASNO,
@@ -38,6 +38,9 @@
     LEFT JOIN TB_REVISION TR2 ON LIST.SUBBOARD_RV_SEQ = TR2.SEQ AND TR2.R_TYPE = 'SB'
     LEFT JOIN TB_REVISION TR3 ON LIST.IC_RV_SEQ = TR3.SEQ AND TR3.R_TYPE = 'IC'
     WHERE 1 = 1
+    <if test="sDate !=null and eDate !=null">
+      AND LIST.REG_TIMESTAMP BETWEEN #{sDate}::timeSTAMP AND #{eDate}::timeSTAMP
+    </if>
     <if test="searchType !=null or searchValue !=null">
       AND ${searchType} LIKE '%'|| #{searchValue} ||'%'
     </if>
