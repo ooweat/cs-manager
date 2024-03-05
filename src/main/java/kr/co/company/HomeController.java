@@ -34,6 +34,11 @@ public class HomeController {
         return workbook;
     }
     
+    @GetMapping(value="/dashboard")
+    public ModelAndView dashboard() {
+        return new ModelAndView("/dashboard.loading");
+    }
+    
     @GetMapping(value="/repairs")
     public ModelAndView repairList() {
         return new ModelAndView("/repair/list.loading");

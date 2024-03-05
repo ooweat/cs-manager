@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/api")
 public class RepairController {
     
     private final RepairService repairService;
@@ -32,6 +32,16 @@ public class RepairController {
     public ResponseEntity<Map> repairs(RepairRequest repairRequest) {
         System.out.println(repairRequest.getSDate());
         return ResponseEntity.ok(repairService.findAllByRequest(repairRequest));
+    }
+    
+    @GetMapping(value = "/repairs/terminal-model-count")
+    public ResponseEntity<Map> terminalModelCount(RepairRequest repairRequest) {
+        return ResponseEntity.ok(repairService.findThisMonthTerminalModelCount(repairRequest));
+    }
+    
+    @GetMapping(value = "/repairs/error-top5")
+    public ResponseEntity<Map> errorTop5(RepairRequest repairRequest) {
+        return ResponseEntity.ok(repairService.findThisMonthErrorTop5(repairRequest));
     }
     
     @GetMapping("/repairs/{asNo}")
@@ -56,7 +66,8 @@ public class RepairController {
     }
     
     @GetMapping("/repairs/excel")
-    public void findAllCommonSettingsTypeExcel(RepairRequest repairRequest, HttpServletResponse response)
+    public void findAllCommonSettingsTypeExcel(RepairRequest repairRequest,
+        HttpServletResponse response)
         throws IOException {
         repairService.findAllByRequestExcel(repairRequest, response);
     }

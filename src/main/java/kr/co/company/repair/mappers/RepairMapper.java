@@ -1,6 +1,7 @@
 package kr.co.company.repair.mappers;
 
 import java.util.List;
+import kr.co.company.as.domain.CommonInfoType;
 import kr.co.company.repair.application.dto.RepairRequest;
 import kr.co.company.as.domain.As;
 import org.apache.ibatis.annotations.Mapper;
@@ -12,4 +13,6 @@ public interface RepairMapper {
     boolean patchRepair(String asNo, As as);
     boolean createRepair(As as);
     boolean deleteRepair(String asNo);
+    List<CommonInfoType> findThisMonthTerminalModelCount(RepairRequest repairRequest);
+    List<CommonInfoType> findThisMonthErrorTop5(RepairRequest repairRequest);
 }

@@ -12,12 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
+import kr.co.company.as.domain.As;
+import kr.co.company.as.domain.CommonInfoType;
+import kr.co.company.as.mappers.AsMapper;
 import kr.co.company.common.ResponseCode;
 import kr.co.company.common.domain.BaseResponse;
 import kr.co.company.common.domain.PageNavigation;
-import kr.co.company.as.mappers.AsMapper;
 import kr.co.company.repair.application.dto.RepairRequest;
-import kr.co.company.as.domain.As;
 import kr.co.company.repair.mappers.RepairMapper;
 import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -42,53 +43,6 @@ public class RepairService {
     public RepairService(RepairMapper repairMapper, AsMapper asMapper) {
         this.repairMapper = repairMapper;
         this.asMapper = asMapper;
-    }
-    
-    public Map<String, Object> findAllByRequest(RepairRequest repairRequest) {
-        Map<String, Object> response = new HashMap<>();
-        PageHelper.startPage(repairRequest.getPage(), 10);
-        Page<As> list = (Page<As>) repairMapper.findAllByRequest(repairRequest);
-        response.put("page", new PageNavigation(list));
-        response.put("data", list);
-        return response;
-    }
-    
-    public As findRepairByAsNo(String asNo) {
-        return repairMapper.findRepairByAsNo(asNo);
-    }
-    
-    public BaseResponse patchRepair(String asNo, As as) {
-        if (repairMapper.patchRepair(asNo, as)) {
-            return new BaseResponse(ResponseCode.SUCCESS_INSERT);
-        } else {
-            return new BaseResponse(ResponseCode.ERROR_INSERT);
-        }
-    }
-    
-    @Transactional
-    public BaseResponse createRepair(As as) {
-        As as2 = new As(makeAsNo(), as);
-        if (repairMapper.createRepair(as2)) {
-            return new BaseResponse(ResponseCode.SUCCESS_INSERT);
-        } else {
-            return new BaseResponse(ResponseCode.ERROR_INSERT);
-        }
-    }
-    
-    //asNo: 연월일시분초 + 4자리 숫자
-    private String makeAsNo() {
-        return LocalDateTime.now()
-            .format(DateTimeFormatter.ofPattern("yyMMddHHmmss"))
-            + String.format("%04d", (int) (Math.random() * 100) + 1);
-    }
-    
-    @Transactional
-    public BaseResponse deleteRepair(String asNo) {
-        if (repairMapper.deleteRepair(asNo)) {
-            return new BaseResponse(ResponseCode.SUCCESS_REQUEST);
-        } else {
-            return new BaseResponse(ResponseCode.ERROR_REQUEST);
-        }
     }
     
     public void findAllByRequestExcel(RepairRequest repairRequest, HttpServletResponse response)
@@ -216,7 +170,7 @@ public class RepairService {
             
             bodyRow = sheet.createRow(rowNo++);
             colno = 0;
-    
+            
             bodyCell = bodyRow.createCell(colno++);
             bodyCell.setCellStyle(bodyStyle);
             bodyCell.setCellValue(list.get(i).getCreateDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
@@ -224,7 +178,7 @@ public class RepairService {
             bodyCell = bodyRow.createCell(colno++);
             bodyCell.setCellStyle(bodyStyle);
             bodyCell.setCellValue(list.get(i).getRepairDate());
-    
+            
             bodyCell = bodyRow.createCell(colno++);
             bodyCell.setCellStyle(bodyStyle);
             bodyCell.setCellValue(list.get(i).getRepairExpireDate());
@@ -232,11 +186,11 @@ public class RepairService {
             bodyCell = bodyRow.createCell(colno++);
             bodyCell.setCellStyle(bodyStyle);
             bodyCell.setCellValue(list.get(i).getCid());
-    
+            
             bodyCell = bodyRow.createCell(colno++);
             bodyCell.setCellStyle(bodyStyle);
             bodyCell.setCellValue(list.get(i).getCompName());
-    
+            
             bodyCell = bodyRow.createCell(colno++);
             bodyCell.setCellStyle(bodyStyle);
             bodyCell.setCellValue(list.get(i).getPtnCompName());
@@ -290,5 +244,66 @@ public class RepairService {
         
         workbook.write(out);
         out.flush();
+    }
+    
+    public Map<String, Object> findAllByRequest(RepairRequest repairRequest) {
+        Map<String, Object> response = new HashMap<>();
+        PageHelper.startPage(repairRequest.getPage(), 10);
+        Page<As> list = (Page<As>) repairMapper.findAllByRequest(repairRequest);
+        response.put("page", new PageNavigation(list));
+        response.put("data", list);
+        return response;
+    }
+    
+    public Map<String, Object> findThisMonthTerminalModelCount (RepairRequest repairRequest) {
+        Map<String, Object> response = new HashMap<>();
+        List<CommonInfoType> list = repairMapper.findThisMonthTerminalModelCount(repairRequest);
+        response.put("data", list);
+        return response;
+    }
+    
+    public Map<String, Object> findThisMonthErrorTop5 (RepairRequest repairRequest) {
+        Map<String, Object> response = new HashMap<>();
+        List<CommonInfoType> list = repairMapper.findThisMonthErrorTop5(repairRequest);
+        response.put("data", list);
+        return response;
+    }
+    
+    public As findRepairByAsNo(String asNo) {
+        return repairMapper.findRepairByAsNo(asNo);
+    }
+    
+    public BaseResponse patchRepair(String asNo, As as) {
+        if (repairMapper.patchRepair(asNo, as)) {
+            return new BaseResponse(ResponseCode.SUCCESS_INSERT);
+        } else {
+            return new BaseResponse(ResponseCode.ERROR_INSERT);
+        }
+    }
+    
+    @Transactional
+    public BaseResponse createRepair(As as) {
+        As as2 = new As(makeAsNo(), as);
+        if (repairMapper.createRepair(as2)) {
+            return new BaseResponse(ResponseCode.SUCCESS_INSERT);
+        } else {
+            return new BaseResponse(ResponseCode.ERROR_INSERT);
+        }
+    }
+    
+    //asNo: 연월일시분초 + 4자리 숫자
+    private String makeAsNo() {
+        return LocalDateTime.now()
+            .format(DateTimeFormatter.ofPattern("yyMMddHHmmss"))
+            + String.format("%04d", (int) (Math.random() * 100) + 1);
+    }
+    
+    @Transactional
+    public BaseResponse deleteRepair(String asNo) {
+        if (repairMapper.deleteRepair(asNo)) {
+            return new BaseResponse(ResponseCode.SUCCESS_REQUEST);
+        } else {
+            return new BaseResponse(ResponseCode.ERROR_REQUEST);
+        }
     }
 }

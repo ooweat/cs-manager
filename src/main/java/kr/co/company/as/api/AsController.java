@@ -1,11 +1,15 @@
 package kr.co.company.as.api;
 
+import java.util.Map;
 import kr.co.company.as.application.AsService;
+import kr.co.company.as.application.dto.AsRequest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/as")
+@RequestMapping("/api")
 public class AsController {
     
     private final AsService asService;
@@ -13,6 +17,13 @@ public class AsController {
     public AsController(final AsService asService) {
         this.asService = asService;
     }
+    
+    @GetMapping(value = "/as/as-count")
+    public ResponseEntity<Map> findThisMonthAsCount(AsRequest asRequest) {
+        return ResponseEntity.ok(asService.findThisMonthAsCount(asRequest));
+    }
+    
+    
     /*
     @GetMapping(value = "/partners/{ptnCompSeq}")
     public ResponseEntity<Map> findPartnerByCompSeq(@PathVariable final int ptnCompSeq) {
