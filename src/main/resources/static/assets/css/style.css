@@ -506,7 +506,7 @@ select.form-control:not([size]):not([multiple]) {
 
 /* 3.3 List */
 .list-unstyled-border li {
-  border-bottom: 1px solid #c9c9c9;
+  border-bottom: 1px solid #efefef;
   padding-bottom: 15px;
   margin-bottom: 15px; }
 .list-unstyled-border li .custom-checkbox {
@@ -843,7 +843,7 @@ select.form-control:not([size]):not([multiple]) {
   height: 50px;
   align-items: center; }
 .card .card-stats .card-stats-item {
-  width: calc(100% / 3);
+  width: calc(100% / 6);
   text-align: center;
   padding: 5px 20px; }
 .card .card-stats .card-stats-item .card-stats-item-label {

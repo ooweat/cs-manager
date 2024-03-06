@@ -55,6 +55,9 @@
                     <a href="#" class="dropdown-item has-icon">
                         <i class="fas fa-id-card" style="float:none"></i>권한: ${member.userLevel}
                     </a>
+                    <a href="#" class="dropdown-item has-icon">
+                        <i class="fas fa-id-card" style="float:none"></i>파트너: ${member.companySeq}
+                    </a>
                     <%--<div class="dropdown-divider"></div>--%>
                     <a href="/logout" class="dropdown-item has-icon text-danger">
                         <i class="fas fa-sign-out-alt" style="float:none"></i> Logout
@@ -73,10 +76,8 @@
                 <a href="#">SP</a>
             </div>
             <ul class="sidebar-menu">
-                <%--멤버십--%>
                 <li class="menu-header">고객지원 서비스</li>
-                <li class="nav-item"><a class="nav-link text-decoration-trash" href="#"
-                                        onclick="alert('이관 준비 중인 서비스입니다.');">
+                <li class="nav-item"><a class="nav-link" href="/dashboard">
                     <i class="far fa-clipboard"></i> <span>Dashboard(샘플)</span></a></li>
                 <li class="nav-item dropdown">
                     <a href="#" class="nav-link text-decoration-trash"
