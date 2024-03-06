@@ -26,7 +26,8 @@
 
         //수정일 경우
         if ('${asNo}' != '') {
-          $('#confirmBtn').text('수정');
+          $('#confirmBtn').text('원본 데이터 수정');
+          $('#reRegistermBtn').show();
           $('.regist-group').show();
           await getRepairData('${asNo}');
         } else { //등록일 경우
@@ -45,23 +46,33 @@
             $('#compSeq').prepend(
                 '<option value="' + cmd.compSeq + '" selected=selected>' + cmd.compName
                 + '</option>');
-            cmd.ptnCompSeq == null ? $("#ptnCompSeq").val('Y').trigger('change') : $("#ptnCompSeq").val(cmd.ptnCompSeq).trigger('change');
+            cmd.ptnCompSeq == null ? $("#ptnCompSeq").val('Y').trigger('change') : $(
+                "#ptnCompSeq").val(cmd.ptnCompSeq).trigger('change');
             $('#serialNo').val(cmd.serialNo);
             $('#cid').val(cmd.cid);
-            cmd.samFlag == null ? $("#samFlag").val('Y').trigger('change') : $("#samFlag").val(cmd.samFlag).trigger('change');
-            cmd.tidSeq == null ? $("#tidSeq").val(0).trigger('change') : $("#tidSeq").val(cmd.tidSeq).trigger('change');
+            cmd.samFlag == null ? $("#samFlag").val('Y').trigger('change') : $("#samFlag").val(
+                cmd.samFlag).trigger('change');
+            cmd.tidSeq == null ? $("#tidSeq").val(0).trigger('change') : $("#tidSeq").val(
+                cmd.tidSeq).trigger('change');
             $('#terminalId').val(cmd.terminalId);
             $('#repairDate').val(cmd.repairDate);
             $('#repairExpireDate').val(cmd.repairExpireDate);
 
-            cmd.trbSeq == null ? $("#trbSeq").val(0).trigger('change') : $("#trbSeq").val(cmd.trbSeq).trigger('change');
-            cmd.rtSeq == null ? $("#rtSeq").val(0).trigger('change') : $("#rtSeq").val(cmd.rtSeq).trigger('change');
-            cmd.atSeq == null ? $("#atSeq").val(0).trigger('change') : $("#atSeq").val(cmd.atSeq).trigger('change');
-            cmd.mbRvSeq == null ? $("#mbRvSeq").val(0).trigger('change') : $("#mbRvSeq").val(cmd.mbRvSeq).trigger('change');
-            cmd.sbRvSeq == null ? $("#sbRvSeq").val(0).trigger('change') : $("#sbRvSeq").val(cmd.sbRvSeq).trigger('change');
-            cmd.icRvSeq == null ? $("#icRvSeq").val(0).trigger('change') : $("#icRvSeq").val(cmd.icRvSeq).trigger('change');
+            cmd.trbSeq == null ? $("#trbSeq").val(0).trigger('change') : $("#trbSeq").val(
+                cmd.trbSeq).trigger('change');
+            cmd.rtSeq == null ? $("#rtSeq").val(0).trigger('change') : $("#rtSeq").val(
+                cmd.rtSeq).trigger('change');
+            cmd.atSeq == null ? $("#atSeq").val(0).trigger('change') : $("#atSeq").val(
+                cmd.atSeq).trigger('change');
+            cmd.mbRvSeq == null ? $("#mbRvSeq").val(0).trigger('change') : $("#mbRvSeq").val(
+                cmd.mbRvSeq).trigger('change');
+            cmd.sbRvSeq == null ? $("#sbRvSeq").val(0).trigger('change') : $("#sbRvSeq").val(
+                cmd.sbRvSeq).trigger('change');
+            cmd.icRvSeq == null ? $("#icRvSeq").val(0).trigger('change') : $("#icRvSeq").val(
+                cmd.icRvSeq).trigger('change');
+
             //ptnComment
-            $('.note-editable').html(cmd.ptnComment);
+            $('#ptnComment').html(cmd.ptnComment);
 
           }, // success
           error: function (xhr, status) {
@@ -90,6 +101,7 @@
           }
         });
       }
+
       function callPartners() {
         $.ajax({
           type: "GET",
@@ -110,12 +122,14 @@
           }
         });
       }
+
       function callTerminalModel() {
         $.ajax({
           type: "GET",
           url: "/api/settings/terminal-models",
           cache: false,
           success: function (cmd) {
+            console.log(cmd.data);
             if (cmd.data.length > 0) {
               for (let i = 0; i < cmd.data.length; i++) {
                 $('#tidSeq').append(
@@ -196,6 +210,12 @@
         if ($('#ptnCompSeq').val() == '0') {
           alert('협력사를 선택해주세요.');
           $('#ptnCompSeq').focus();
+          return;
+        }
+
+        if ($('#terminalId').val() == '') {
+          alert('TID를 입력해주세요.(없을 경우 0000000000)');
+          $('#terminalId').focus();
           return;
         }
 
@@ -314,12 +334,12 @@
                             <input type="hidden" id="canUseUserId" value="S"/>
                             <div class="row">
                                 <div class="form-group col-lg-3 col-md-6 col-sm-6 regist-group">
-                                    <label for="ptnWriter">접수자</label>
+                                    <label for="ptnWriter">등록자</label>
                                     <input id="ptnWriter" type="text" class="form-control"
                                            name="ptnWriter" readonly required="" autofocus="">
                                 </div>
                                 <div class="form-group col-lg-4 col-md-6 col-sm-6 regist-group">
-                                    <label for="asNo">접수번호</label>
+                                    <label for="asNo">등록번호</label>
                                     <input id="asNo" type="text" class="form-control"
                                            name="asNo" readonly required="" autofocus="">
                                 </div>
@@ -368,11 +388,20 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-lg-4 col-md-5 col-sm-6">
-                                    <label for="terminalId">TID</label>
-                                    <input id="terminalId" type="text" class="form-control"
-                                           name="terminalId"
-                                           placeholder="TID 입력" required="" autofocus=""
-                                           maxlength="10">
+                                    <label for="terminalId">*TID</label>
+                                    <div class="input-group">
+                                        <input id="terminalId" type="text"
+                                               class="form-control col-12"
+                                               name="terminalId"
+                                               placeholder="TID 입력" required="" autofocus=""
+                                               maxlength="10">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-danger" type="button"
+                                                    onclick="$('#terminalId').val('0000000000')">
+                                                없음
+                                            </button>
+                                        </div>
+                                    </div>
                                     <div class="invalid-feedback">
                                         내용을 입력해주세요!
                                     </div>
@@ -497,14 +526,22 @@
                             <input type="hidden" name="modAdminId" value="${userId}"/>
                             <input type="hidden" name="page" value="userInsert"/>
                             <div class="row">
-                                <div class="form-group col-6">
+
+                                <div class="form-group col-4" id="reRegistermBtn" style="display: none;">
+                                    <button type="button"
+                                            onclick="_confirm('post');"
+                                            class="btn btn-warning btn-lg btn-block">
+                                        원본 신규 이력추가
+                                    </button>
+                                </div>
+                                <div class="form-group col-4">
                                     <button type="button" id="confirmBtn"
                                             onclick="_confirm('${asNo}' == '' ? 'post' : 'patch');"
                                             class="btn btn-primary btn-lg btn-block">
                                         등록
                                     </button>
                                 </div>
-                                <div class="form-group col-6">
+                                <div class="form-group col-4">
                                     <button type="button" onclick="history.back()"
                                             class="btn btn-secondary btn-lg btn-block">
                                         뒤로가기
@@ -520,23 +557,7 @@
 </div>
 <script type="text/javascript">
   $(document).ready(function () {
-    /*$('#summernote').summernote({
-      height: 300,                 // 에디터 높이
-      minHeight: null,             // 최소 높이
-      maxHeight: null,             // 최대 높이
-      focus: true,                  // 에디터 로딩후 포커스를 맞출지 여부
-      lang: "ko-KR",					// 한글 설정
-      //placeholder: '최대 1,000 자까지 쓸 수 있습니다',	//placeholder 설정
-      toolbar: [
-        // [groupName, [list of button]]
-        ['style', ['bold', 'italic', 'underline', 'clear']],
-        ['font', ['strikethrough', 'superscript', 'subscript']],
-        ['fontsize', ['fontsize']],
-        ['color', ['color']],
-        ['para', ['ul', 'ol', 'paragraph']],
-        ['height', ['height']]
-      ]
-    });*/
+
   });
 </script>
 </body>

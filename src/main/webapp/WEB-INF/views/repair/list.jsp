@@ -11,12 +11,13 @@
           name="viewport">
     <script type="text/javascript" src="/assets/js/jquery.js"></script>
     <script type="text/javascript" src="/assets/js/custom.js"></script>
-    <%--<script type="text/javascript" src="/assets/js/membership-datepicker.js"></script>--%>
+    <script type="text/javascript" src="/static/assets/js/support-datepicker.js"></script>
     <script type="text/javascript">
       function init() {
         loadingStop();
-        /*$('#sDate').val(moment().format('YYYY-MM-DD'));
-        $('#eDate').val(moment().format('YYYY-MM-DD'));*/
+        /*날짜 초기값 설정*/
+        $('#sDate').val(moment().format('YYYY-MM-DD'));
+        $('#eDate').val(moment().format('YYYY-MM-DD'));
         callList(1);
       }
 
@@ -59,7 +60,9 @@
       }
 
       function callList(page) {
-        let queryString = "?page=" + page;
+        let queryString = "?page=" + page
+            + "&sDate=" + $("#sDate").val()
+            + "&eDate=" + $("#eDate").val();
 
         if ($("#searchType").val() != "0" && $("#searchValue").val() != "") {
           queryString += "&searchType=" + $("#searchType").val() + "&searchValue=" + $(
@@ -96,6 +99,8 @@
                     + cmd.data[i].asNo + ')" >' +
                     '<i class="fas fa-trash"></i></a>' +
                     '</td>';
+                html += '<td class="text-center">' + convertDateFormat(cmd.data[i].createDate,
+                    'YYYY-MM-DD') + '</td>';
                 html += '<td class="text-center">' + cmd.data[i].repairDate + '</td>';
                 html += '<td class="text-center">' + cmd.data[i].repairExpireDate + '</td>';
                 html += '<td class="text-center">' + cmd.data[i].cid + '</td>';
@@ -114,6 +119,7 @@
               createPagination(cmd.page);
             } else {
               html += '';
+              $('.pagination').html(html);
             }
 
             $('#tableBody').html(html);
@@ -149,7 +155,7 @@
                                     <div class="container-fluid border">
                                         <div class="row border-bottom">
                                             <div class="col-lg-2 col-sm-2 col-md-2 bg-light p-2">
-                                                상세검색
+                                                상세정보
                                                 <i class="fas fa-question-circle title-i-line-height text-primary"
                                                    data-toggle="tooltip" title=""
                                                    data-original-title=
@@ -179,9 +185,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <%--<div class="row border-bottom"
+                                        <div class="row border-bottom"
                                              style="border-bottom: 0px solid !important;">
-                                            <div class="col-lg-2 col-md-2 bg-light p-2">접수기간검색
+                                            <div class="col-lg-2 col-md-2 bg-light p-2">등록기간
                                             </div>
                                             <div class="col-lg-4 col-sm-4 col-md-5 py-2 m-auto-0">
                                                 <div class="input-group daterange-btn form-inline col-lg-12 col-sm-12 col-md-12">
@@ -231,7 +237,7 @@
                                                     </label>
                                                 </div>
                                             </div>
-                                        </div>--%>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -243,7 +249,7 @@
                                 <h6 class="pt-0">조회결과 <span class="text-muted"
                                                             id="searchCount"></span>
                                 </h6>
-                                <code>※요청된 정렬순서: 불량내역, 수리내역, 메인REV, 서브REV, ICREV</code>
+                                <code>※정렬순서요청(오름차순): 불량내역, 수리내역, 메인REV, 서브REV, ICREV</code>
                             </div>
                             <div class="float-right">
                                 <button class="btn btn-primary" onclick="excelDownload('repairs');">
@@ -257,6 +263,7 @@
                                     <thead>
                                     <tr>
                                         <th class="text-center">관리</th>
+                                        <th class="text-center">등록일자</th>
                                         <th class="text-center">처리일자</th>
                                         <th class="text-center">보증만료일자</th>
                                         <th class="text-center">CID</th>
