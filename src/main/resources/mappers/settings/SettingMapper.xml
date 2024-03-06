@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.company.setting.mappers.SettingMapper">
-
   <select id="findPartnerByCompSeq" parameterType="string"
     resultType="kr.co.company.as.domain.CommonInfoType">
     <if test="ptnCompSeq == '2000'">
@@ -157,7 +156,8 @@
     <if test='settingType == "MN" or settingType == "SB" or settingType == "IC"'>
       DELETE FROM TB_REVISION WHERE SEQ = #{seq}
     </if>
-    <if test='settingType == "RT" or settingType == "RA" or settingType == "CT" or settingType == "CR" or settingType == "CA"'>
+    <if
+      test='settingType == "RT" or settingType == "RA" or settingType == "CT" or settingType == "CR" or settingType == "CA"'>
       DELETE FROM TB_ERROR WHERE T_TYPE = #{settingType} AND SEQ = #{seq}
     </if>
   </delete>

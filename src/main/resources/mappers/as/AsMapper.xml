@@ -2,5 +2,33 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.company.as.mappers.AsMapper">
-
+  <select id="findThisMonthAsCount" parameterType="kr.co.company.as.application.dto.AsRequest"
+    resultType="kr.co.company.as.domain.CommonInfoType">
+    SELECT progress_status as NAME,
+    COUNT(*) AS COUNT
+    -- ,to_char((count(*) * 100/ sum(count(*)) OVER ()), 'FM
+    -- 990.00') AS percent
+    FROM TB_AS_LIST
+    WHERE 1=1
+    <if test="sDate !=null and eDate !=null">
+      AND REG_TIMESTAMP BETWEEN #{sDate}::timeSTAMP AND #{eDate}::timeSTAMP
+    </if>
+    <choose>
+      <when test='ptnCompSeq=="2000"'>
+        -- 본사
+        GROUP BY progress_status
+      </when>
+      <when test='ptnCompSeq=="2001"'>
+        -- 대전센터
+        AND ptn_comp_seq IN ('2001', '2002', '2003', '2004', '2005')
+        GROUP BY progress_status
+      </when>
+      <otherwise>
+        -- 그 외 나머지
+        AND ptn_comp_seq = ${ptnCompSeq}
+        GROUP BY progress_status
+      </otherwise>
+    </choose>
+    ORDER BY progress_status
+  </select>
 </mapper>
