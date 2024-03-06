@@ -13,73 +13,46 @@
       #settings-card table td {
         height: 45px;
       }
-      #settings-card tr td{padding: 0px !important;}
+
+      #settings-card tr td {
+        padding: 0px !important;
+      }
     </style>
     <script type="text/javascript" src="/assets/js/jquery.js"></script>
     <script type="text/javascript" src="/assets/js/custom.js"></script>
     <script type="text/javascript">
       $(function () {
+
         $("#searchValue").on("keyup", function (key) {
           if (key.keyCode == 13) {
-            callList(1, $('.nav-pills a.active').attr("data-type"));
+            callList(1, $('.nav-pills a.active').attr("data-type"))
           }
         });
       });
 
       function init() {
         loadingStop();
-        callList(1, 'users');
         callPartners();
+
+        callList(1, '/users');
       }
 
-      function callList(page, target) {
-        let queryString = target + "?page=" + page;
-
-        if ($("#searchValue").val() != "") {
-          queryString += "&searchValue=" + $("#searchValue").val();
+      function alreadyCheck(dom) {
+        let id = dom.parentNode.previousElementSibling.value;
+        if (id == '') {
+          alert('아이디를 입력해주세요.');
+          return;
         }
-
         $.ajax({
           type: "GET",
-          url: "/api/settings/" + queryString,
+          url: "/api/auth/user/" + id,
           cache: false,
           success: function (cmd) {
-            let header = '';
-            let html = '';
-            console.log(cmd.data);
-
-
             if (cmd.data.length > 0) {
-              header += '<tr>';
-                header += '<th class="text-center">이름</th>';
-                header += '<th class="text-center">아이디</th>';
-                header += '<th class="text-center">협력사</th>';
-                header += '<th class="text-center">권한</th>';
-                header += '<th class="text-center">삭제</th>';
-                header += '</tr>';
-                $('#tableHeader').html(header);
-              for (let i = 0; i < cmd.data.length; i++) {
-                html += '<tr onclick="location.href=' + "'/settings/" + cmd.data[i].seq + "'"
-                    + '">';
-                /*html += '<td class="text-center">' + convertTypeBySettingsCode(cmd.data[i].name)
-                    + '</td>';*/
-                html += '<td class="text-center">' + cmd.data[i].userName + '</td>';
-                html += '<td class="text-center">' + cmd.data[i].userId + '</td>';
-                html += '<td class="text-center">' + cmd.data[i].companyName + '</td>';
-                html += '<td class="text-center">' + cmd.data[i].userLevel + '</td>';
-                /*html += '<td class="text-center">' + convertDateFormat(cmd.data[i].name, "YYYY-MM-DD") + '</td>';*/
-                html += '<td class="text-center">' +
-                    '<a class="btn btn-danger btn-action trigger--fire-modal-1" data-toggle="tooltip" onclick="deleteSetting('
-                    + cmd.data[i].seq + ')" >' +
-                    '<i class="fas fa-trash"></i></a>' +
-                    '</td>';
-                html += '</tr>';
-              }
-              createPagination(cmd.page, target);
+              alert('이미 사용중인 아이디입니다.');
             } else {
-              html += '';
+              alert('사용 가능한 아이디입니다.');
             }
-            $('#tableBody').html(html);
             loadingStop();
           }, // success
           error: function (xhr, status) {
@@ -162,7 +135,7 @@
 
         $.ajax({
           type: "POST",
-          url: "/api/setting",
+          url: "/api/settings",
           contentType: "application/json",
           dataType: "json",
           data: JSON.stringify({
@@ -183,28 +156,30 @@
         });
       }
 
-      /*사용자 수정*/
-      function saveUsers(dom) {
-        let type = dom.parentNode.previousElementSibling.previousElementSibling.value;
-        let name = dom.parentNode.previousElementSibling.value;
-
-        if (type == '0') {
-          alert('유형을 선택해주세요.');
+      /*사용자 등록*/
+      function createUser(dom) {
+        if ($('#ptnCompSeq') == '0') {
+          alert('협력사를 선택해주세요.');
           return;
         }
-        if (name == '') {
-          alert('명칭을 입력해주세요.');
+
+        if ($('#ptnCompSeq') == '0') {
+          alert('중복검사를 진행해주세요.');
           return;
         }
 
         $.ajax({
           type: "POST",
-          url: "/api/auth/user",
+          url: "/api/auth/users",
           contentType: "application/json",
           dataType: "json",
           data: JSON.stringify({
-            type: type,
-            name: name
+            ptnCompSeq: $('#ptnCompSeq').val(),
+            userLevel: $('#userLevel').val(),
+            userId: $('#userId').val(),
+            userName: $('#userName').val(),
+            userPhone: $('#userPhone').val(),
+            organization: $('#organization').val(),
           }),
           cache: false,
           success: function (cmd) {
@@ -220,7 +195,7 @@
         });
       }
 
-      function deleteSetting(seq) {
+      function deleteSetting(settingType, seq) {
         Swal.fire({
           title: '정말로 삭제하시겠습니까?',
           text: "삭제 시, 복구할 수 없습니다!",
@@ -234,7 +209,13 @@
           if (result.isConfirmed) {
             $.ajax({
               type: "DELETE",
-              url: "/api/settings/" + seq,
+              url: "/api/settings",
+              contentType: "application/json",
+              dataType: "json",
+              data: JSON.stringify({
+                settingType: settingType,
+                seq: seq
+              }),
               cache: false,
               success: function () {
                 Swal.fire({
@@ -258,7 +239,12 @@
         })
       }
 
-      function changeSettingTable(target, page){
+      function callList(page, target) {
+        //$('.nav-pills a.active').attr('data-type');
+        $('.nav-pills a').removeClass('active');
+        $('.nav-pills .nav-item a[data-type="' + target.replaceAll("/", "") + '"]').addClass(
+            'active');
+
         let queryString = target + "?page=" + page;
         if ($("#searchValue").val() != "") {
           queryString += "&searchValue=" + $("#searchValue").val();
@@ -266,33 +252,71 @@
 
         $.ajax({
           type: "GET",
-          url: "/api"/ + queryString,
+          url: "/api/settings/" + queryString,
           cache: false,
           success: function (cmd) {
+            console.log(cmd);
+            let header = '';
             let html = '';
+
             if (cmd.data.length > 0) {
-              for (let i = 0; i < cmd.data.length; i++) {
-                html += '<tr onclick="location.href=' + "'/settings/" + cmd.data[i].seq + "'"
-                    + '">';
-                //<div class="badge badge-success">Completed</div>
-                html += '<td class="text-center">' + convertTypeBySettingsCode(cmd.data[i].type)
-                    + '</td>';
-                html += '<td class="text-left">' + cmd.data[i].name + '</td>';
-                html += '<td class="text-center">' + convertDateFormat(cmd.data[i].createDate,
-                    "YYYY-MM-DD") + '</td>';
-                html += '<td class="text-center">' +
-                    '<a class="btn btn-danger btn-action trigger--fire-modal-1" data-toggle="tooltip" onclick="deleteSetting('
-                    + cmd.data[i].seq + ')" >' +
-                    '<i class="fas fa-trash"></i></a>' +
-                    '</td>';
-                html += '</tr>';
+              switch (target) {
+                case '/users':
+                case 'users':
+                  header += '<tr>';
+                  header += '<th class="text-left">이름</th>';
+                  header += '<th class="text-left">아이디</th>';
+                  header += '<th class="text-left">협력사</th>';
+                  header += '<th class="text-center">권한</th>';
+                  //header += '<th class="text-center">삭제</th>';
+                  header += '</tr>';
+                  $('#tableHeader').html(header);
+                  for (let i = 0; i < cmd.data.length; i++) {
+                    //html += '<tr onclick="location.href=' + "'/settings/" + cmd.data[i].seq + "'" + '">';
+                    html += '<tr>'
+                    html += '<td class="text-left">' + cmd.data[i].userName + '</td>';
+                    html += '<td class="text-left">' + cmd.data[i].userId + '</td>';
+                    html += '<td class="text-left">' + cmd.data[i].companyName + '</td>';
+                    html += '<td class="text-center">' + cmd.data[i].userLevel + '</td>';
+                    /*html += '<td class="text-center">' +
+                        '<a class="btn btn-danger btn-action trigger--fire-modal-1" data-toggle="tooltip" onclick="deleteSetting(' +"'"+ cmd.data[i].type + "', '" + cmd.data[i].seq +"'"+ ')" >' + '<i class="fas fa-trash"></i></a>' +
+                        '</td>';*/
+                    html += '</tr>';
+                  }
+                  createPagination(cmd.page, target);
+                  break;
+                case '/after-services':
+                case '/repairs':
+                case 'after-services':
+                case 'repairs':
+                  header += '<tr>';
+                  header += '<th class="text-left">유형</th>';
+                  header += '<th class="text-left">명칭</th>';
+                  header += '<th class="text-center">등록일자</th>';
+                  header += '<th class="text-center">삭제</th>';
+                  header += '</tr>';
+                  $('#tableHeader').html(header);
+                  for (let i = 0; i < cmd.data.length; i++) {
+                    //html += '<tr onclick="location.href=' + "'/settings/" + cmd.data[i].seq + "'" + '">';
+                    html += '<tr>';
+                    html += '<td class="text-left">' + convertTypeBySettingsCode(cmd.data[i].type)
+                        + '</td>';
+                    html += '<td class="text-left">' + cmd.data[i].name + '</td>';
+                    html += '<td class="text-center">' + convertDateFormat(cmd.data[i].createDate)
+                        + '</td>';
+                    html += '<td class="text-center">' +
+                        '<a class="btn btn-danger btn-action trigger--fire-modal-1" data-toggle="tooltip" onclick="deleteSetting('
+                        + "'" + cmd.data[i].type + "', '" + cmd.data[i].seq + "'" + ')" >'
+                        + '<i class="fas fa-trash"></i></a>' +
+                        '</td>';
+                    html += '</tr>';
+                  }
+                  createPagination(cmd.page, target);
+                  break;
               }
-              console.log(cmd.page);
-              createPagination(cmd.page);
             } else {
               html += '';
             }
-
             $('#tableBody').html(html);
             loadingStop();
           }, // success
@@ -322,49 +346,56 @@
                         <div class="card-body">
                             <p class="text-muted">계정정보 등록(수정중)</p>
                             <div class="input-group mb-2">
-                                <select class="form-control custom-select col-3" id="ptnCompSeq" name="ptnCompSeq">
+                                <select class="form-control custom-select col-3" id="ptnCompSeq"
+                                        name="ptnCompSeq">
                                     <option value="0">-협력사-</option>
                                 </select>
-                                <input type="text" placeholder="ID를 입력해주세요."
+                                <input type="text" placeholder="ID를 입력해주세요." id="userId"
                                        class="form-control col-12">
                                 <div class="input-group-append">
                                     <button class="btn btn-primary"
-                                            type="button" onclick="alreadyCheck(this)">중복검사
+                                            type="button" onclick="alreadyCheck(this)">중복검사(테스트)
                                     </button>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="form-group col-md-6 col-12">
                                     <label for="userLevel">권한</label>
-                                    <select id="userLevel" name="userLevel" class="form-control" tabindex="-1" aria-hidden="true">
-                                        <option value="MA">마스터</option>
-                                        <option value="MN">운영자</option>
+                                    <select id="userLevel" name="userLevel"
+                                            class="form-control custom-select"
+                                            tabindex="-1" aria-hidden="true">
+                                        <option value="MA">마스터(유비씨엔)</option>
+                                        <option value="MN">운영자(유비씨엔-부서)</option>
                                         <option value="OP">협력사</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-md-6 col-12">
                                     <label>이름</label>
-                                    <input type="text" class="form-control" placeholder="이름을 입력해주세요." required="">
+                                    <input type="text" class="form-control" id="userName"
+                                           placeholder="이름을 입력해주세요." required="">
                                     <div class="invalid-feedback">
                                         이름을 입력해주세요.
                                     </div>
                                 </div>
                                 <div class="form-group col-md-6 col-12 mb-0">
                                     <label>연락처</label>
-                                    <input type="text" class="form-control" placeholder="연락처를 입력해주세요." required="">
+                                    <input type="text" class="form-control" id="userPhone"
+                                           placeholder="연락처를 입력해주세요." required="">
                                     <div class="invalid-feedback">
                                         연락처를 입력해주세요.
                                     </div>
                                 </div>
                                 <div class="form-group col-md-6 col-12 mb-0">
-                                    <label>부서</label>
-                                    <input type="text" class="form-control" placeholder="(선택)부서명을 입력해주세요." required="">
+                                    <label>협력사명 또는 부서명</label>
+                                    <input type="text" class="form-control" id="organization"
+                                           placeholder="협력사명 또는 부서명 입력" required="">
                                     <div class="invalid-feedback">
                                         부서명을 입력해주세요.
                                     </div>
                                 </div>
                                 <div class="card-footer text-right">
-                                    <button class="btn btn-primary">등록하기</button>
+                                    <button class="btn btn-primary" onclick="createUser()">등록하기
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -443,31 +474,21 @@
                         <div class="card-header">
                             <ul class="nav nav-pills">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-type="users" onclick="changeSettingTable('/settings/users', 1)"><i class="fas fa-user"></i> 계정</a>
+                                    <a class="nav-link active" data-type="users"
+                                       onclick="callList(1, '/users')"><i
+                                            class="fas fa-user"></i> 계정</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-type="as" onclick="changeSettingTable('/settings/as', 1)"><i class="fas fa-cog"></i> AS</a>
+                                    <a class="nav-link" data-type="after-services"
+                                       onclick="callList(1, '/after-services')"><i
+                                            class="fas fa-cog"></i> AS</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-type="repair" onclick="changeSettingTable('/settings/repair', 1)"><i class="fas fa-cog"></i> Repair</a>
+                                    <a class="nav-link" data-type="repairs"
+                                       onclick="callList(1, '/repairs')"><i
+                                            class="fas fa-cog"></i> Repairs</a>
                                 </li>
                             </ul>
-
-                            <%--<div class="selectgroup datechoice-btn" id="function-label">
-                                <label class="selectgroup-item mb-0">
-                                    <input type="radio" name="datechoice-btn" value="2" class="selectgroup-input" checked="" onclick="setDateRangePicker('3')">
-                                    <span class="selectgroup-button"><i class="fas fa-cog"></i> AS</span>
-                                </label>
-                                <label class="selectgroup-item mb-0">
-                                    <input type="radio" name="datechoice-btn" value="1" class="selectgroup-input" onclick="setDateRangePicker('1')">
-                                    <span class="selectgroup-button"><i class="fas fa-user"></i> 계정</span>
-                                </label>
-                                <label class="selectgroup-item mb-0">
-                                    <input type="radio" name="datechoice-btn" value="3" class="selectgroup-input" onclick="setDateRangePicker('6')">
-                                    <span class="selectgroup-button"><i class="fas fa-cog"></i> Repair</span>
-                                </label>
-                            </div>--%>
-
                             <div class="card-header-form">
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="searchValue"
