@@ -149,22 +149,13 @@ function callRepairTop5() {
               + cmd.data[i].trbName + '</a>'
               + '<div class="bullet"></div>수리내역: <a href="#">'
               + cmd.data[i].atName + '</a></div>';
-          html += '</div>';
-          html += '<div class="media-items">';
-          html += '<div class="media-item">';
-          html += '<div class="media-value">' + cmd.data[i].cid + '</div>';
-          html += '<div class="media-label">CID</div>';
-          html += '</div>';
-          html += '<div class="media-item">';
-          html += '<div class="media-value">' + cmd.data[i].terminalId
-              + '</div>';
-          html += '<div class="media-label">TID</div>';
-          html += '</div>';
-          html += '<div class="media-item">';
-          html += '<div class="media-value">' + cmd.data[i].serialNo
-              + '</div>';
-          html += '<div class="media-label">Serial</div>';
-          html += '</div>';
+          html += '<div class="text-muted text-small">'
+              + '<div class="bullet"></div>CID: <a href="#">'
+              + cmd.data[i].cid + '</a>'
+              + '<div class="bullet"></div>TID: <a href="#">'
+              + cmd.data[i].terminalId + '</a></div>'
+              + '<div class="bullet"></div>Serial: <a href="#">'
+              + cmd.data[i].serialNo + '</a></div>';
           html += '</div>';
           html += '</li>';
         }

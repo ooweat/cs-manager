@@ -96,14 +96,6 @@
 <body onload="init('${member.companySeq}');">
 <div class="main-content">
     <section class="section">
-        <div class="section-header row">
-            <div class="col-lg-6 col-md-12 col-12 col-sm-12">
-                <h1>단말기 이력관리</h1>
-            </div>
-            <div class="col-lg-6 col-md-12 col-12 col-sm-12">
-                <h1>AS</h1>
-            </div>
-        </div>
         <div class="section-title row">
             <div class="dropdown d-inline">
                 <a class="font-weight-600 dropdown-toggle" data-toggle="dropdown"
@@ -118,6 +110,9 @@
         </div>
         <div class="row">
             <div class="col-lg-6 col-md-12 col-12 col-sm-12">
+                <div class="section-header col-lg-12 col-md-12 col-12 col-sm-12">
+                    <h1>단말기 이력관리</h1>
+                </div>
                 <div class="card card-statistic-2">
                     <div class="card-stats">
                         <div class="card-stats-title">단말기 모델별 추이
@@ -175,6 +170,9 @@
                 </div>
             </div>
             <div class="col-lg-6 col-md-12 col-12 col-sm-12">
+                <div class="section-header col-lg-12 col-md-12 col-12 col-sm-12">
+                    <h1>AS</h1>
+                </div>
                 <div class="card card-statistic-2">
                     <div class="card-stats">
                         <div class="card-stats-title">단말기 모델별 추이</div>
@@ -192,13 +190,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row m-0">
                     <div class="card col-lg-12 col-md-12 col-12 col-sm-12">
                         <div class="card-header">
                             <h4>이번달 최신 TOP 5</h4>
                         </div>
                         <div class="card-body">
-                            <ul class="list-unstyled list-unstyled-border" id="repair-recent-top5">
+                            <ul class="list-unstyled list-unstyled-border" id="as-recent-top5">
 
                             </ul>
                             <div class="text-center pt-1 pb-1">

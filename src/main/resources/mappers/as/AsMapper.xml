@@ -10,9 +10,7 @@
     -- 990.00') AS percent
     FROM TB_AS_LIST
     WHERE 1=1
-    <if test="sDate !=null and eDate !=null">
-      AND REG_TIMESTAMP BETWEEN #{sDate}::timeSTAMP AND #{eDate}::timeSTAMP
-    </if>
+      AND REG_TIMESTAMP BETWEEN DATE_TRUNC('month', CURRENT_DATE) AND (DATE_TRUNC('MONTH', CURRENT_DATE) + INTERVAL '1 MONTH - 1 day')
     <choose>
       <when test='ptnCompSeq=="2000"'>
         -- 본사
