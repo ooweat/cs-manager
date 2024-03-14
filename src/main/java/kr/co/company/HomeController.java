@@ -61,4 +61,9 @@ public class HomeController {
     public ModelAndView settings() {
         return new ModelAndView("/setting/list.tiles");
     }
+    
+    @GetMapping(value="/aslist")
+    public ModelAndView asList() {
+        return new ModelAndView("/as/list.loading");
+    }
 }

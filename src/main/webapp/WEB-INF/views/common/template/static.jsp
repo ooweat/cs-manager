@@ -80,8 +80,7 @@
                 <li class="nav-item"><a class="nav-link" href="/dashboard">
                     <i class="far fa-clipboard"></i> <span>Dashboard(샘플)</span></a></li>
                 <li class="nav-item dropdown">
-                    <a href="#" class="nav-link text-decoration-trash"
-                       onclick="alert('이관 준비 중인 서비스입니다.');">
+                    <a href="/aslist" class="nav-link">
                         <i class="fas fa-tools"></i>
                         <span>AS 접수내역</span></a>
                 </li>
