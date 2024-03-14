@@ -1,11 +1,10 @@
 package kr.co.company.setting.api;
 
 import java.util.Map;
-import kr.co.company.auth.domain.Member;
-import kr.co.company.setting.application.dto.SettingRequest;
 import kr.co.company.as.domain.CommonInfoType;
 import kr.co.company.common.domain.BaseResponse;
 import kr.co.company.setting.application.SettingService;
+import kr.co.company.setting.application.dto.SettingRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/settings")
 public class SettingController {
+    
     private final SettingService settingService;
     
     public SettingController(final SettingService settingService) {
@@ -43,6 +43,11 @@ public class SettingController {
     @GetMapping(value = "/partners/{ptnCompSeq}")
     public ResponseEntity<Map> findPartnerByCompSeq(@PathVariable final int ptnCompSeq) {
         return ResponseEntity.ok(settingService.findPartnerByCompSeq(ptnCompSeq));
+    }
+    
+    @GetMapping(value = "/status/{userLevel}")
+    public ResponseEntity<Map> findStatusByCompSeq(@PathVariable final String userLevel) {
+        return ResponseEntity.ok(settingService.findStatusByCompSeq(userLevel));
     }
     
     @GetMapping("/terminal-models")
