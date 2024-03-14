@@ -366,20 +366,42 @@ function excelTemplate(target) {
 }
 
 function excelDownload(target) {
-  let queryString = "?page=" + 0;
+  let queryString = "?page=" + 1
+      + "&sDate=" + $("#sDate").val()
+      + "&eDate=" + $("#eDate").val();
+
+  if ($("#searchType").val() != "0" && $("#searchValue").val() != "") {
+    queryString += "&searchType=" + $("#searchType").val() + "&searchValue=" + $(
+        "#searchValue").val();
+  }
+
+  if ($("#searchType").val() == "0" && $("#searchValue").val() != "") {
+    alert("검색조건을 선택해주세요.");
+    return;
+  }
+
+  if ($("#searchType").val() != "0" && $("#searchValue").val() == "") {
+    alert("검색어를 입력해주세요.");
+    return;
+  }
+
+  let partnerSeq = '';
+  $("input:checkbox[name=partnerGroup]:checked").each(function () {
+    partnerSeq += $(this).val() + ",";
+  });
+  if (partnerSeq != '') {
+    queryString += "&searchOptionValue1=" + partnerSeq;
+  }
+
+  let statusSeq = '';
+  $("input:checkbox[name=progressGroup]:checked").each(function () {
+    statusSeq += $(this).val() + ",";
+  });
+  if (statusSeq != '') {
+    queryString += "&searchOptionValue2=" + statusSeq;
+  }
+
   location.href = "/api/" + target + "/excel" + queryString;
-  /*$.ajax({
-    type: "GET",
-    url: "/api/" + target + "/excel" + queryString,
-    cache: false,
-    success: function () {
-
-    },
-    error: function (xhr, status) {
-      alert(xhr + " : " + status);
-    }
-  });*/
-
 }
 
 //천단위 (,) 생성
