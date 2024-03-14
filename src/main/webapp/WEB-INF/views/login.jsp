@@ -108,8 +108,8 @@
       dataType: "json",
       success: function (cmd) {
         if (cmd.code == '0000') {
-          //window.location.assign("/dashboard");
-          window.location.assign("/repairs");
+          window.location.assign("/dashboard");
+          //window.location.assign("/repairs");
         } else {
           alert('아이디 또는 비밀번호가 다릅니다.');
           location.assign("/");
