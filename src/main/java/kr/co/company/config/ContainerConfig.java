@@ -1,4 +1,4 @@
-package kr.co.ubcn.membership.config;
+package kr.co.company.config;
 
 import org.apache.catalina.connector.Connector;
 import org.apache.coyote.ajp.AbstractAjpProtocol;
@@ -13,6 +13,9 @@ public class ContainerConfig {
     
     @Value("${tomcat.ajp.port}")
     int ajpPort;
+    
+    @Value("${server.port.https}")
+    int httpsPort;
     
     @Value("${tomcat.ajp.protocol}")
     String ajpProtocol;
@@ -36,6 +39,7 @@ public class ContainerConfig {
     private Connector createAjpConnector() {
         Connector ajpConnector = new Connector(ajpProtocol);
         ajpConnector.setPort(ajpPort);
+        ajpConnector.setRedirectPort(httpsPort);
         ajpConnector.setSecure(false);
         ajpConnector.setAllowTrace(false);
         ajpConnector.setScheme("http");
