@@ -8,6 +8,8 @@ public class AsRequest {
     private int page;
     private String searchType;
     private String searchValue;
+    private String partnerGroup;
+    private String progressGroup;
     private String sDate;
     private String eDate;
     private int ptnCompSeq;
