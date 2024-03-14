@@ -189,6 +189,7 @@ function callErrorTop5(type) {
         for (let i = 0; i < cmd.data.length; i++) {
           html += '<li class="media">';
           html += '<div class="media-body">';
+          //2024.03.14 twkim 퍼센트 계산 시, lazy 처리 필요
           html += '<div class="float-right">' + cmd.data[i].count + '건 ('
               + Math.round(cmd.data[i].count / Number($('#usageTerminalModelTotalCount').text()) * 100) + '%)</div>';
           html += '<div class="media-title">' + cmd.data[i].name + '</div>'

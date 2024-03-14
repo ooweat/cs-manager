@@ -117,7 +117,7 @@
                     <div class="card-stats">
                         <div class="card-stats-title">단말기 모델별 추이
                         </div>
-                        <div class="row" id="usageTerminalModelCount">
+                        <div class="row m-0-auto" id="usageTerminalModelCount">
                         </div>
                     </div>
                     <div class="card-icon shadow-primary bg-primary">
@@ -176,7 +176,7 @@
                 <div class="card card-statistic-2">
                     <div class="card-stats">
                         <div class="card-stats-title">단말기 모델별 추이</div>
-                        <div class="row" id="usageASCount">
+                        <div class="row m-0-auto" id="usageASCount">
                         </div>
                     </div>
                     <div class="card-icon shadow-primary bg-primary">
