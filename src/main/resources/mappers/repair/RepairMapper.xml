@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.company.repair.mappers.RepairMapper">
-  <select id="findThisMonthErrorTop5"
+  <select id="findErrorTop5"
     parameterType="kr.co.company.repair.application.dto.RepairRequest"
     resultType="kr.co.company.as.domain.CommonInfoType">
     SELECT CASE WHEN TE.T_TYPE IS NULL THEN '미등록' ELSE TE.T_TYPE END
@@ -11,15 +11,23 @@
            COUNT(*) AS COUNT
     FROM TB_AS_LIST LIST
       LEFT JOIN TB_ERROR TE
-    ON LIST.TRB_SEQ = TE.SEQ AND TE.T_TYPE = #{searchType}
+
+      <if test="searchType !=null">
+        <choose>
+          <when test="searchType == 'RT'">
+            ON LIST.TRB_SEQ = TE.SEQ AND TE.T_TYPE = 'RT'
+          </when>
+          <when test="searchType == 'RA'">
+            ON LIST.AT_SEQ = TE.SEQ AND TE.T_TYPE = 'RA'
+          </when>
+        </choose>
+      </if>
     WHERE 1 = 1
       AND SUPPORT_TYPE = 'R'
-      AND LIST.REG_TIMESTAMP BETWEEN #{sDate}:: TIMESTAMP
-      AND #{eDate}:: TIMESTAMP
     GROUP BY T_TYPE, TE.NAME
     ORDER BY COUNT DESC LIMIT 5
   </select>
-  <select id="findThisMonthTerminalModelCount"
+  <select id="findTerminalModelCount"
     parameterType="kr.co.company.repair.application.dto.RepairRequest"
     resultType="kr.co.company.as.domain.CommonInfoType">
     SELECT TID_MODEL_NAME AS NAME, COUNT(*) AS COUNT
@@ -28,8 +36,6 @@
     ON LIST.TID_SEQ = TTM.TID_SEQ
     WHERE 1=1
       AND SUPPORT_TYPE = 'R'
-      AND LIST.REG_TIMESTAMP BETWEEN #{sDate}:: TIMESTAMP
-      AND #{eDate}:: TIMESTAMP
     GROUP BY TID_MODEL_NAME
   </select>
 

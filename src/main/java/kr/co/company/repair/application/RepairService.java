@@ -255,16 +255,16 @@ public class RepairService {
         return response;
     }
     
-    public Map<String, Object> findThisMonthTerminalModelCount (RepairRequest repairRequest) {
+    public Map<String, Object> findTerminalModelCount (RepairRequest repairRequest) {
         Map<String, Object> response = new HashMap<>();
-        List<CommonInfoType> list = repairMapper.findThisMonthTerminalModelCount(repairRequest);
+        List<CommonInfoType> list = repairMapper.findTerminalModelCount(repairRequest);
         response.put("data", list);
         return response;
     }
     
-    public Map<String, Object> findThisMonthErrorTop5 (RepairRequest repairRequest) {
+    public Map<String, Object> findErrorTop5 (RepairRequest repairRequest) {
         Map<String, Object> response = new HashMap<>();
-        List<CommonInfoType> list = repairMapper.findThisMonthErrorTop5(repairRequest);
+        List<CommonInfoType> list = repairMapper.findErrorTop5(repairRequest);
         response.put("data", list);
         return response;
     }

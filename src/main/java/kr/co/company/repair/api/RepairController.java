@@ -36,12 +36,12 @@ public class RepairController {
     
     @GetMapping(value = "/repairs/terminal-model-count")
     public ResponseEntity<Map> terminalModelCount(RepairRequest repairRequest) {
-        return ResponseEntity.ok(repairService.findThisMonthTerminalModelCount(repairRequest));
+        return ResponseEntity.ok(repairService.findTerminalModelCount(repairRequest));
     }
     
     @GetMapping(value = "/repairs/error-top5")
     public ResponseEntity<Map> errorTop5(RepairRequest repairRequest) {
-        return ResponseEntity.ok(repairService.findThisMonthErrorTop5(repairRequest));
+        return ResponseEntity.ok(repairService.findErrorTop5(repairRequest));
     }
     
     @GetMapping("/repairs/{asNo}")

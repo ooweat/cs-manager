@@ -13,6 +13,6 @@ public interface RepairMapper {
     boolean patchRepair(String asNo, As as);
     boolean createRepair(As as);
     boolean deleteRepair(String asNo);
-    List<CommonInfoType> findThisMonthTerminalModelCount(RepairRequest repairRequest);
-    List<CommonInfoType> findThisMonthErrorTop5(RepairRequest repairRequest);
+    List<CommonInfoType> findTerminalModelCount(RepairRequest repairRequest);
+    List<CommonInfoType> findErrorTop5(RepairRequest repairRequest);
 }
