@@ -1,18 +1,15 @@
 //Page loaded 후 바로 실행
 function init(ptnCompSeq) {
   loadingStop();
-  //이번달 초기화
-  $('#orders-month').text(moment().format('MM'));
 
   //단말기 이력관리
   callUsageListByTerminalModel(); //단말기 모델별 추이
   callErrorTop5('RT');
   callErrorTop5('RA');
-  callRepairTop5();
+  //callRepairTop5();
 
   callUsageListByAs(ptnCompSeq);
 
-  
   //dashboardToast($('#user_info').text());
 
 }
@@ -28,7 +25,7 @@ function callUsageListByAs(ptnCompSeq) {
     url: "/api/as/as-count" + queryString,
     cache: false,
     success: function (cmd) {
-      console.log(cmd);
+      //console.log(cmd);
       let html = '';
       let total = 0;
       if (cmd.data.length > 0) {
@@ -61,7 +58,6 @@ function callUsageListByAs(ptnCompSeq) {
               break;
           }
 
-
           html += '<div class="card-stats-item">';
           html += '<div class="card-stats-item-count">' + cmd.data[i].count
               + '</div>';
@@ -85,10 +81,9 @@ function callUsageListByAs(ptnCompSeq) {
     }
   });
 }
+
 function callUsageListByTerminalModel() {
-  let queryString = "?page=1"
-      + "&sDate=" + moment().startOf('month').format('YYYY-MM-DD')
-      + "&eDate=" + moment().endOf('month').format('YYYY-MM-DD');
+  let queryString = "?page=1";
   $.ajax({
     type: "GET",
     url: "/api/repairs/terminal-model-count" + queryString,
@@ -123,9 +118,7 @@ function callUsageListByTerminalModel() {
 }
 
 function callRepairTop5() {
-  let queryString = "?page=1"
-      + "&sDate=" + moment().startOf('month').format('YYYY-MM-DD')
-      + "&eDate=" + moment().endOf('month').format('YYYY-MM-DD')
+  let queryString = "?page=1";
   ;
 
   $.ajax({
@@ -174,10 +167,14 @@ function callRepairTop5() {
 
 function callErrorTop5(type) {
   let queryString = "?page=1"
-      + "&sDate=" + moment().startOf('month').format('YYYY-MM-DD')
-      + "&eDate=" + moment().endOf('month').format('YYYY-MM-DD')
       + "&searchType=" + type
   ;
+  let ctx;
+  if (type == 'RT') {
+    ctx = document.getElementById("myChart4").getContext('2d');
+  } else {
+    ctx = document.getElementById("myChart5").getContext('2d');
+  }
 
   $.ajax({
     type: "GET",
@@ -185,16 +182,47 @@ function callErrorTop5(type) {
     cache: false,
     success: function (cmd) {
       let html = '';
+      let values = [];
+      let titles = [];
       if (cmd.data.length > 0) {
         for (let i = 0; i < cmd.data.length; i++) {
-          html += '<li class="media">';
-          html += '<div class="media-body">';
-          //2024.03.14 twkim 퍼센트 계산 시, lazy 처리 필요
-          html += '<div class="float-right">' + cmd.data[i].count + '건 ('
-              + Math.round(cmd.data[i].count / Number($('#usageTerminalModelTotalCount').text()) * 100) + '%)</div>';
-          html += '<div class="media-title">' + cmd.data[i].name + '</div>'
-          html += '</div></li>';
+          values.push(cmd.data[i].count);
+          titles.push(cmd.data[i].name);
         }
+        console.log(values);
+        let myChart = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: titles,
+            datasets: [{
+              label: ["%"],
+              data: values,
+              borderWidth: 1.2,
+              backgroundColor: [
+                '#191d21',
+                '#63ed7a',
+                '#ffa426',
+                '#fc544b',
+                '#6777ef',
+              ],
+            }],
+          },
+          options: {
+            responsive: false,
+            legend: {
+              position: 'left',
+            },
+            tooltip: {
+              mode: 'index',
+              titleAlign: 'center',
+              position: 'nearest',
+              xAlign: 'center',
+              displayColors: false,
+              intersect: false,
+            },
+          }
+        });
+
       } else {
         html += '';
       }
