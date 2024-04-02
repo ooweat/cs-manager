@@ -281,30 +281,17 @@ function validationCheck() {
   }
 }
 
-//빙고뮤(쿠폰 연락처 '-')
-function addHyphenPhoneNo(obj) {
-  var number = obj.value.replace(/[^0-9]/g, "");
-  var phoneNo = '';
-  if (number.length < 4) {
-    return number;
-  } else if (number.length <= 5) {
-    phoneNo += number.substr(0, 3);
-    phoneNo += '-';
-    phoneNo += number.substr(3);
-  } else if (number.length < 10) {
-    phoneNo += number.substr(0, 3);
-    phoneNo += '-';
-    phoneNo += number.substr(3, 4);
-    phoneNo += '-';
-    phoneNo += number.substr(7);
+//연락처
+function addHyphenPhoneNo(target) {
+  if (target.value.length > 9) {
+    $("#findAddressByPhone").show();
   } else {
-    phoneNo += number.substr(0, 3);
-    phoneNo += '-';
-    phoneNo += number.substr(3, 4);
-    phoneNo += '-';
-    phoneNo += number.substr(7);
+    $("#findAddressByPhone").hide();
   }
-  obj.value = phoneNo;
+
+  target.value = target.value
+  .replace(/[^0-9]/g, '')
+  .replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
 }
 
 $(function () {
@@ -371,8 +358,9 @@ function excelDownload(target) {
       + "&eDate=" + $("#eDate").val();
 
   if ($("#searchType").val() != "0" && $("#searchValue").val() != "") {
-    queryString += "&searchType=" + $("#searchType").val() + "&searchValue=" + $(
-        "#searchValue").val();
+    queryString += "&searchType=" + $("#searchType").val() + "&searchValue="
+        + $(
+            "#searchValue").val();
   }
 
   if ($("#searchType").val() == "0" && $("#searchValue").val() != "") {
@@ -413,6 +401,13 @@ function numberWithCommas(number) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function validateNotEmpty(target) {
+  if (target == null || target == '') {
+    return false;
+  }
+  return true;
+}
+
 function convertDateFormat(date, format) {
   let dateSplit = date;
   if (date.indexOf("T") != -1) {
@@ -437,28 +432,100 @@ function convertDateFormat(date, format) {
   return dateSplit;
 }
 
+function convertProgressStatus(status) {
+  switch (status) {
+    case '1':
+      return '접수신청';
+    case '2':
+      return '택배접수';
+    case '3':
+      return '택배회수';
+    case '4':
+      return '접수(이관)';
+    case '5':
+      return '방문예약';
+    case '6':
+      return '완료대기';
+    case '7':
+      return '처리완료';
+    case '8':
+      return '접수취소';
+  }
+}
+
 function createPagination(page, target) {
   let html = "";
   if (page.startPage > 10) {
-    html += '<li class="page-item"><a href="#" class="page-link" onclick="callList(\'' + 1 + '\' ,\'' + target + '\')">처음</a></li>';
+    html += '<li class="page-item"><a href="#" class="page-link" onclick="callList(\''
+        + 1 + '\' ,\'' + target + '\')">처음</a></li>';
   }
   if (page.startPage > 1) {
-    html += '<li class="page-item"><a href="#" class="page-link" onclick="callList(\'' + (page.startPage - 1) + '\' ,\'' + target + '\')">'
+    html += '<li class="page-item"><a href="#" class="page-link" onclick="callList(\''
+        + (page.startPage - 1) + '\' ,\'' + target + '\')">'
         + '<i class="custom-fas fas fa-chevron-left"></i></a></li>';
   }
   for (let i = page.startPage; i <= page.endPage; i++) {
-    html += '<li class="page-item ' + (page.pageNum == i ? 'active' : '') + '">';
-    html += '<a href="#" class="page-link" onclick="callList(\'' + i + '\' ,\'' + target + '\')">'
+    html += '<li class="page-item ' + (page.pageNum == i ? 'active' : '')
+        + '">';
+    html += '<a href="#" class="page-link" onclick="callList(\'' + i + '\' ,\''
+        + target + '\')">'
         + i + '</a>';
     html += '</li>';
   }
   if ((page.endPage - page.startPage) > 8) {
-    html += '<li class="page-item"><a href="#" class="page-link" onclick="callList(\'' + (page.endPage + 1) + '\' ,\'' + target + '\')">'
+    html += '<li class="page-item"><a href="#" class="page-link" onclick="callList(\''
+        + (page.endPage + 1) + '\' ,\'' + target + '\')">'
         + '<i class="custom-fas fas fa-chevron-right"></i></a></li>';
   }
   if (page.startPage > 10 && page.pages != page.endPage) {
     html += '<li class="page-item"><a href="#" class="page-link" '
-        + 'onclick="callList(\'' + page.pages + '\' ,\'' + target + '\')">마지막</a></li>';
+        + 'onclick="callList(\'' + page.pages + '\' ,\'' + target
+        + '\')">마지막</a></li>';
   }
   $('.pagination').html(html);
+}
+
+// 카카오 주소검색
+function execPostCode() {
+  new daum.Postcode({
+    oncomplete: function (data) {
+      // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+      // 도로명 주소의 노출 규칙에 따라 주소를 조합한다.
+      // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+      var fullRoadAddr = data.roadAddress; // 도로명 주소 변수
+      var extraRoadAddr = ''; // 도로명 조합형 주소 변수
+
+      // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+      // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+      if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+        extraRoadAddr += data.bname;
+      }
+      // 건물명이 있고, 공동주택일 경우 추가한다.
+      if (data.buildingName !== '' && data.apartment === 'Y') {
+        extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName
+            : data.buildingName);
+      }
+      // 도로명, 지번 조합형 주소가 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+      if (extraRoadAddr !== '') {
+        extraRoadAddr = ' (' + extraRoadAddr + ')';
+      }
+      // 도로명, 지번 주소의 유무에 따라 해당 조합형 주소를 추가한다.
+      if (fullRoadAddr !== '') {
+        fullRoadAddr += extraRoadAddr;
+      }
+
+      // 우편번호와 주소 정보를 해당 필드에 넣는다.
+      //console.log(data.zonecode);
+      //console.log(fullRoadAddr);
+
+      // 결과 전달
+      $("[name=ctmPlacePostCode]").val(data.zonecode);
+      $("[name=ctmPlaceAddress1]").val(fullRoadAddr);
+
+      /* document.getElementById('signUpUserPostNo').value = data.zonecode; //5자리 새우편번호 사용
+      document.getElementById('signUpUserCompanyAddress').value = fullRoadAddr;
+      document.getElementById('signUpUserCompanyAddressDetail').value = data.jibunAddress; */
+    }
+  }).open();
 }
