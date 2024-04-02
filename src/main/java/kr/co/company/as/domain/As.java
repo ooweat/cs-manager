@@ -46,6 +46,7 @@ public class As extends BaseTimeEntity {
     private long repairCost;            //수리청구비용
     private String ptnComment;            //메모
     private String progressStatus;        //진행상태
+    private String progressStatusName;    //진행상태명
     private int ptnCompSeq;        //이관사
     private String ptnCompName;        //이관사
     
