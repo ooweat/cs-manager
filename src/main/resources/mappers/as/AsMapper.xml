@@ -2,15 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.company.as.mappers.AsMapper">
-  <select id="findThisMonthAsCount" parameterType="kr.co.company.as.application.dto.AsRequest"
+  <select id="findAsCount" parameterType="kr.co.company.as.application.dto.AsRequest"
     resultType="kr.co.company.as.domain.CommonInfoType">
     SELECT progress_status as NAME,
     COUNT(*) AS COUNT
-    -- ,to_char((count(*) * 100/ sum(count(*)) OVER ()), 'FM
-    -- 990.00') AS percent
     FROM TB_AS_LIST
     WHERE 1=1
-      AND REG_TIMESTAMP BETWEEN DATE_TRUNC('month', CURRENT_DATE) AND (DATE_TRUNC('MONTH', CURRENT_DATE) + INTERVAL '1 MONTH - 1 day')
     <choose>
       <when test='ptnCompSeq=="2000"'>
         -- 본사
@@ -28,5 +25,118 @@
       </otherwise>
     </choose>
     ORDER BY progress_status
+  </select>
+  <select id="findAsTop5" parameterType="kr.co.company.as.application.dto.AsRequest"
+    resultType="kr.co.company.as.domain.As">
+    SELECT COMP.COMP_NAME AS COMPNAME,
+    LIST.AS_NO AS ASNO,
+    LIST.REG_TIMESTAMP AS CREATEDATE,
+    PROGRESS_STATUS AS PROGRESSSTATUS,
+    CASE
+    WHEN LIST.PTN_COMP_SEQ = 9999 THEN '이관대기'
+    ELSE TU.USER_ORGANIZATION END AS PTNCOMPNAME
+    FROM TB_AS_LIST LIST
+    LEFT JOIN TB_COMPANY COMP ON LIST.COMP_SEQ = COMP.COMP_SEQ
+    LEFT JOIN TB_USER TU ON LIST.PTN_COMP_SEQ = TU.COMPANY_SEQ
+    WHERE 1=1
+    AND SUPPORT_TYPE = 'A'
+    <choose>
+      <when test='ptnCompSeq=="2000"'>
+        -- 본사
+      </when>
+      <when test='ptnCompSeq=="2001"'>
+        -- 대전센터
+        AND ptn_comp_seq IN ('2001', '2002', '2003', '2004', '2005')
+      </when>
+      <otherwise>
+        -- 그 외 나머지
+        AND ptn_comp_seq = ${ptnCompSeq}
+      </otherwise>
+    </choose>
+    ORDER BY LIST.REG_TIMESTAMP DESC
+    LIMIT 5
+  </select>
+  <select id="findAllByRequest" parameterType="kr.co.company.as.application.dto.AsRequest"
+    resultType="kr.co.company.as.domain.As">
+    SELECT LIST.AS_NO AS ASNO,
+    CASE
+    WHEN LIST.PTN_COMP_SEQ = 9999 THEN '이관대기'
+    ELSE TU.USER_ORGANIZATION END AS PTNCOMPNAME,
+    LIST.REG_TIMESTAMP AS CREATEDATE,
+    LIST.TERMINAL_ID AS TERMINALID,
+    LIST.PROGRESS_STATUS AS PROGRESSSTATUS,
+    COMP.COMP_NAME AS COMPNAME,
+    LIST.CTM_NAME AS CTMNAME,
+    LIST.CTM_PHONE AS CTMPHONE,
+    LIST.CTM_PLACE_POST_CODE AS CTMPLACEPOSTCODE,
+    LIST.CTM_PLACE_ADDRESS1 AS CTMPLACEADDRESS1,
+    LIST.CTM_PLACE_ADDRESS2 AS CTMPLACEADDRESS2,
+    LIST.CTM_PLACE_NAME AS CTMPLACENAME,
+    LIST.CTM_CHARGE AS CTMCHARGE,
+    LIST.REPAIR_COST AS REPAIRCOST,
+    LIST.CP_TIMESTAMP AS CPTIMESTAMP,
+    LIST.DEPOSIT AS DEPOSIT
+    FROM TB_AS_LIST LIST
+    LEFT JOIN TB_COMPANY COMP ON LIST.COMP_SEQ = COMP.COMP_SEQ
+    LEFT JOIN TB_USER TU ON LIST.PTN_COMP_SEQ = TU.COMPANY_SEQ
+    WHERE 1 = 1
+    <if test="sDate !=null and eDate !=null">
+      AND LIST.REG_TIMESTAMP BETWEEN #{sDate}::timeSTAMP AND #{eDate}::timeSTAMP
+    </if>
+    <if test="searchType !=null or searchValue !=null">
+      AND ${searchType} LIKE '%'|| #{searchValue} ||'%'
+    </if>
+    AND SUPPORT_TYPE = 'A'
+    AND PTN_COMP_SEQ IN (${partnerGroup})
+    AND PROGRESS_STATUS IN (${progressGroup})
+    ORDER BY PROGRESS_STATUS, LIST.MODIFY_TIMESTAMP DESC, LIST.REG_TIMESTAMP DESC
+  </select>
+  <select id="findAsByAsNo" parameterType="string" resultType="kr.co.company.as.domain.As">
+    SELECT
+      LIST.AS_NO as ASNO,
+      LIST.PTN_WRITER AS PTNWRITER,
+      LIST.COMP_SEQ AS COMPSEQ,
+      COMP.COMP_NAME   AS COMPNAME,
+      COMP.BUSINESS_NO AS BUSINESSNO,
+      LIST.CTM_NAME  AS CTMNAME,
+      LIST.CTM_PHONE AS CTMPHONE,
+      LIST.CTM_PLACE_POST_CODE AS CTMPLACEPOSTCODE,
+      LIST.CTM_PLACE_ADDRESS1 AS CTMPLACEADDRESS1,
+      LIST.CTM_PLACE_ADDRESS2 AS CTMPLACEADDRESS2,
+      LIST.CTM_PLACE_NAME AS CTMPLACENAME,
+      LIST.TERMINAL_ID AS TERMINALID,
+      LIST.TID_SEQ AS TIDSEQ,
+      TM.TID_MODEL_NAME AS TIDMODELNAME,
+      LIST.VM_SEQ AS VMSEQ,
+      VM.VM_MODEL_NAME AS VMMODELNAME,
+      LIST.TRB_SEQ AS TRBSEQ,
+      TRB.TRB_NAME AS TRBNAME,
+      LIST.AT_SEQ AS ATSEQ,
+      AT.AT_NAME AS ATNAME,
+      LIST.RT_SEQ AS RTSEQ,
+      RT.RT_NAME AS RTNAME,
+      LIST.CTM_CHARGE AS CTMCHARGE,
+      LIST.REPAIR_COST AS REPAIRCOST,
+      LIST.PTN_COMMENT AS PTNCOMMENT,
+      LIST.PTN_MEMO AS PTNMEMO,
+      CASE WHEN LIST.TRANSFER_COST = '' THEN '0' ELSE LIST.TRANSFER_COST END AS TRANSFERCOST,
+      LIST.PROGRESS_STATUS AS PROGRESSSTATUS,
+      TPS.NAME AS PROGRESSSTATUSNAME,
+      LIST.PTN_COMP_SEQ AS PTNCOMPSEQ,
+      LIST.MODIFY_USER AS MODIFYUSER,
+      LIST.MODIFY_TIMESTAMP AS MODIFYDATE,
+      LIST.PTN_FINALE AS PTNFINALE,
+      LIST.DEPOSIT AS DEPOSIT,
+      LIST.DEPOSIT_DATE AS DEPOSITDATE
+    FROM TB_AS_LIST LIST
+           LEFT JOIN TB_COMPANY COMP ON LIST.COMP_SEQ = COMP.COMP_SEQ
+           LEFT JOIN TB_TROUBLE TRB ON LIST.TRB_SEQ = TRB.TRB_SEQ
+           LEFT JOIN TB_VM_MODEL VM ON LIST.VM_SEQ = VM.VM_SEQ
+           LEFT JOIN TB_REAL_TROUBLE RT ON LIST.RT_SEQ = RT.RT_SEQ
+           LEFT JOIN TB_ACTION_TROUBLE AT
+    ON LIST.AT_SEQ = AT.AT_SEQ
+      LEFT JOIN TB_TERMINAL_MODEL TM ON LIST.TID_SEQ = TM.TID_SEQ
+      LEFT JOIN TB_PROGRESS_STATUS TPS ON LIST.PROGRESS_STATUS = TPS.CODE
+    WHERE AS_NO = #{asNo}
   </select>
 </mapper>

@@ -15,10 +15,12 @@ public class AsRequest {
     private int ptnCompSeq;
     
     public AsRequest(final int page, final String searchType, final String searchValue,
-        String sDate, String eDate, int ptnCompSeq) {
+        final String partnerGroup, final String progressGroup, final String sDate, final String eDate, final int ptnCompSeq) {
         this.page = page;
         this.searchType = searchType;
         this.searchValue = searchValue;
+        this.partnerGroup = partnerGroup;
+        this.progressGroup = progressGroup;
         this.sDate = sDate + " 00:00:00";
         this.eDate = eDate + " 23:59:59";
         this.ptnCompSeq = ptnCompSeq;
