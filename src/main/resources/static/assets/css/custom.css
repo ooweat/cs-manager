@@ -120,13 +120,10 @@
 }
 
 .btn-info, .btn-info.disabled {
-    color: #6777ef;
-    border-radius: 3px;
     box-shadow: 0 2px 6px transparent;
-    border-color: transparent;
-    background-color: #f9fafe;
-    font-weight: 600;
-    margin: 0 3px;
+    background-color: #3abaf4;
+    border-color: #3abaf4;
+    color: #fff;
 }
 
 .custom-nav{

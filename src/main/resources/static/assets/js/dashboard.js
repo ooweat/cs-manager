@@ -3,21 +3,56 @@ function init(ptnCompSeq) {
   loadingStop();
 
   //단말기 이력관리
-  callUsageListByTerminalModel(); //단말기 모델별 추이
-  callErrorTop5('RT');
-  callErrorTop5('RA');
-  //callRepairTop5();
-
+  if (ptnCompSeq == 2000) {
+    callUsageListByTerminalModel(); //단말기 모델별 추이
+    callErrorTop5('RT');
+    callErrorTop5('RA');
+    //callRepairTop5();
+  }
   callUsageListByAs(ptnCompSeq);
-
+  callAsTop5(ptnCompSeq);
   //dashboardToast($('#user_info').text());
+
+}
+
+function callAsTop5(ptnCompSeq) {
+  let queryString = "?page=1"
+      + "&ptnCompSeq=" + ptnCompSeq;
+  ;
+
+  $.ajax({
+    type: "GET",
+    url: "/api/as/as-top5" + queryString,
+    cache: false,
+    success: function (cmd) {
+      console.log(cmd);
+      let html = '';
+      let progressStatus = '';
+      for (let i = 0; i < cmd.data.length; i++) {
+        html += '<li class="media"><img class="mr-3 rounded-circle" width="50" src="assets/img/avatar/avatar-4.png" alt="avatar">'
+            + '<div class="media-body"> '
+            + '<div class="badge badge-pill badge-danger mb-1 float-right">'
+            + convertProgressStatus(cmd.data[i].progressStatus) + '</div> '
+            + '<h6 class="media-title"><a href="#">' + cmd.data[i].compName
+            + '</a></h6> '
+            + '<div class="text-small text-muted">' + cmd.data[i].asNo
+            + '<div class="bullet"></div> '
+            + '<span class="text-primary">' + convertDateFormat(
+                cmd.data[i].createDate) + '</span></div> </div> </li>';
+      }
+      $('#as-recent-top5').html(html);
+      loadingStop();
+    }, // success
+    error: function (xhr, status) {
+      alert(xhr + " : " + status);
+      location.href("/");
+    }
+  });
 
 }
 
 function callUsageListByAs(ptnCompSeq) {
   let queryString = "?page=1"
-      + "&sDate=" + moment().startOf('month').format('YYYY-MM-DD')
-      + "&eDate=" + moment().endOf('month').format('YYYY-MM-DD')
       + "&ptnCompSeq=" + ptnCompSeq;
   ;
   $.ajax({
