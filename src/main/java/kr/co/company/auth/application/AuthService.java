@@ -23,6 +23,7 @@ public class AuthService {
             loginRequest.getUserPass());
         if (member != null) {
             session.setAttribute("member", member);
+            session.setMaxInactiveInterval(180 * 60);   // 180분
             return new BaseResponse(ResponseCode.SUCCESS_LOGIN);
         } else {
             session.invalidate();
