@@ -190,16 +190,16 @@
                                             <div class="col-lg-2 col-md-2 bg-light p-2">등록기간
                                             </div>
                                             <div class="col-lg-4 col-sm-4 col-md-5 py-2 m-auto-0">
-                                                <div class="input-group daterange-btn form-inline col-lg-12 col-sm-12 col-md-12">
+                                                <div class="input-group form-inline col-lg-12 col-sm-12 col-md-12">
                                                     <input type="text" name="sDate"
                                                            maxlength="8"
-                                                           class="form-control daterange-sdate"
+                                                           class="form-control daterange-sdate datepicker"
                                                            id="sDate"
                                                            placeholder="시작일자">
                                                     <div class="date-hypen"> ~</div>
                                                     <input type="text" name="eDate"
                                                            maxlength="8"
-                                                           class="form-control daterange-edate"
+                                                           class="form-control daterange-edate datepicker"
                                                            id="eDate"
                                                            placeholder="종료일자">
                                                 </div>

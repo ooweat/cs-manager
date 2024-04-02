@@ -46,19 +46,10 @@
         $('#eDate').val(moment().format('YYYY-MM-DD'));
         callPartners();
         callProgress();
-        callList(1);
+        //callList(1);
       }
 
       function callList(page) {
-        let queryString = "?page=" + page
-            + "&sDate=" + $("#sDate").val()
-            + "&eDate=" + $("#eDate").val();
-
-        if ($("#searchType").val() != "0" && $("#searchValue").val() != "") {
-          queryString += "&searchType=" + $("#searchType").val() + "&searchValue=" + $(
-              "#searchValue").val();
-        }
-
         if ($("#searchType").val() == "0" && $("#searchValue").val() != "") {
           alert("검색조건을 선택해주세요.");
           return;
@@ -69,25 +60,37 @@
           return;
         }
 
-        let partnerSeq = '';
-        $("input:checkbox[name=partnerGroup]:checked").each(function () {
-          partnerSeq += $(this).val() + ",";
-        });
-        if (partnerSeq != '') {
-          queryString += "&searchOptionValue1=" + partnerSeq;
+        let queryString = "?page=" + page
+            + "&sDate=" + $("#sDate").val()
+            + "&eDate=" + $("#eDate").val()
+            + "&ptnCompSeq=" + ${member.companySeq}
+        ;
+
+        if ($("#searchType").val() != "0" && $("#searchValue").val() != "") {
+          queryString += "&searchType=" + $("#searchType").val()
+              + "&searchValue=" + $("#searchValue").val();
         }
 
-        let statusSeq = '';
-        $("input:checkbox[name=progressGroup]:checked").each(function () {
-          statusSeq += $(this).val() + ",";
+        let partnerGroup = '';
+        $("input[name=partnerGroup]:checked").each(function () {
+          partnerGroup += $(this).val() + ",";
         });
-        if (statusSeq != '') {
-          queryString += "&searchOptionValue2=" + statusSeq;
+
+        if (partnerGroup != '') {
+          queryString += "&partnerGroup=" + partnerGroup.slice(0, -1);
+        }
+
+        let progressGroup = '';
+        $("input[name=progressGroup]:checked").each(function () {
+          progressGroup += "'" + $(this).val() + "',";
+        });
+        if (progressGroup != '') {
+          queryString += "&progressGroup=" + progressGroup.slice(0, -1);
         }
 
         $.ajax({
           type: "GET",
-          url: "/api/repairs" + queryString,
+          url: "/api/as/aslist" + queryString,
           cache: false,
           success: function (cmd) {
             console.log(cmd);
@@ -95,27 +98,56 @@
             let html = '';
             if (cmd.data.length > 0) {
               for (let i = 0; i < cmd.data.length; i++) {
-                html += '<tr>';
-                html += '<td class="text-center">' +
+                let progressStatusColor = '';
+                switch (cmd.data[i].progressStatus) {
+                  case '1':
+                    progressStatusColor = 'badge badge-primary';
+                    break;
+                    case '2':
+                    progressStatusColor = 'badge badge-light';
+                    break;
+                    case '3':
+                    progressStatusColor = 'badge badge-primary';
+                    break;
+                    case '4':
+                    progressStatusColor = 'badge badge-warning';
+                    break;
+                    case '5':
+                    progressStatusColor = 'badge badge-info';
+                    break;
+                    case '6':
+                    progressStatusColor = 'badge badge-success';
+                    break;
+                    case '7':
+                    progressStatusColor = 'badge badge-success';
+                    break;
+                    case '8':
+                    progressStatusColor = 'badge badge-danger';
+                    break;
+                }
+
+                html += '<tr onclick="location.href=' + "'/aslist/" + cmd.data[i].asNo + "'" + '">';
+                /*html += '<td class="text-center">' +
                     '<a class="btn btn-primary btn-action mr-1" ' +
                     'data-toggle="tooltip" title="" ' + 'onclick="location.href=' + "'/repairs/"
                     + cmd.data[i].asNo + "'" + '" data-original-title="Edit">' +
                     '<i class="fas fa-pencil-alt"></i></a>' +
-                    '</td>';
+                    '</td>';*/
+                html += '<td class="text-center"><div class="'+progressStatusColor+'">' + convertProgressStatus(
+                    cmd.data[i].progressStatus) + '</div></td>';
                 html += '<td class="text-center">' + convertDateFormat(cmd.data[i].createDate,
                     'YYYY-MM-DD') + '</td>';
-                html += '<td class="text-center">' + cmd.data[i].repairDate + '</td>';
-                html += '<td class="text-center">' + cmd.data[i].repairExpireDate + '</td>';
-                html += '<td class="text-center">' + cmd.data[i].cid + '</td>';
-                html += '<td class="text-left">' + cmd.data[i].compName + '</td>';
-                html += '<td class="text-left">' + cmd.data[i].ptnCompName + '</td>';
-                html += '<td class="text-center">' + cmd.data[i].tidModelName + '</td>';
+                html += '<td class="text-center">' + cmd.data[i].ptnCompName + '</td>';
                 html += '<td class="text-center">' + cmd.data[i].terminalId + '</td>';
-                html += '<td class="text-left">' + cmd.data[i].trbName + '</td>';
-                html += '<td class="text-left">' + cmd.data[i].atName + '</td>';
-                html += '<td class="text-left">' + cmd.data[i].mbRvName + '</td>';
-                html += '<td class="text-left">' + cmd.data[i].sbRvName + '</td>';
-                html += '<td class="text-left">' + cmd.data[i].icRvName + '</td>';
+                html += '<td class="text-left">' + cmd.data[i].compName + '</td>';
+                html += '<td class="text-left">' + cmd.data[i].ctmName + '</td>';
+                html += '<td class="text-left">' + cmd.data[i].ctmPhone + '</td>';
+                html += '<td class="text-left">'
+                    + '(' + cmd.data[i].ctmPlacePostCode + ')'
+                    + cmd.data[i].ctmPlaceAddress1 + '<br>'
+                    + cmd.data[i].ctmPlaceAddress2
+                    + '</td>';
+                html += '<td class="text-left">' + cmd.data[i].ctmPhone + '</td>';
                 html += '</tr>';
               }
 
@@ -207,12 +239,12 @@
     <section class="section">
         <div class="section-body">
             <div class="row">
-                <div class="col-12 col-md-12">
+                <div class="col-12 col-md-12 p-0">
                     <div class="card card-primary custom-card">
                         <div class="card-body">
                             <div class="row form-divider text-primary">
-                                AS 이력관리
-                                <a class="btn btn-primary" href="/repairs/info">신규등록
+                                단말기 AS 접수내역
+                                <a class="btn btn-primary" href="/as/info">신규등록
                                     <span
                                             class="badge badge-white">N</span></a>
                             </div>
@@ -234,26 +266,33 @@
                                                     <select class="form-control custom-select col-3"
                                                             id="searchType" name="searchType">
                                                         <option value="0">-선택-</option>
-                                                        <option value="COMP.COMP_NAME">소속</option>
-                                                        <option value="LIST.TERMINAL_ID">사업자번호
+                                                        <option value="COMP.comp_name">소속</option>
+                                                        <option value="LIST.business_no">사업자번호
                                                         </option>
-                                                        <option value="LIST.SERIAL_NO">접수번호
+                                                        <option value="LIST.as_no">접수번호
                                                         </option>
-                                                        <option value="LIST.CID">TID</option>
-                                                        <option value="LIST.CID">단말기모델</option>
-                                                        <option value="LIST.CID">자판기모델</option>
-                                                        <option value="LIST.CID">설치위치</option>
-                                                        <option value="LIST.CID">점포명</option>
-                                                        <option value="LIST.CID">증상</option>
-                                                        <option value="LIST.CID">작성자</option>
-                                                        <option value="LIST.CID">처리자</option>
-                                                        <option value="LIST.CID">유/무상</option>
-                                                        <option value="LIST.CID">입금여부</option>
-                                                        <option value="LIST.CID">메모</option>
-                                                        <option value="LIST.CID">협력사 메모</option>
+                                                        <option value="LIST.terminal_id">TID
+                                                        </option>
+                                                        <option value="LIST.tid_model_name">단말기모델
+                                                        </option>
+                                                        <option value="LIST.vm_model_name">자판기모델
+                                                        </option>
+                                                        <option value="LIST.ctm_place_name">설치위치
+                                                        </option>
+                                                        <option value="LIST.ctm_name">점포명</option>
+                                                        <option value="trb.trb_name">증상</option>
+                                                        <option value="LIST.ptn_writer">작성자</option>
+                                                        <option value="LIST.ptn_finale">처리자</option>
+                                                        <option value="LIST.ctm_charge">유/무상
+                                                        </option>
+                                                        <option value="LIST.deposit">입금여부</option>
+                                                        <option value="LIST.ptn_comment">메모</option>
+                                                        <option value="LIST.ptn_memo">협력사 메모
+                                                        </option>
                                                     </select>
                                                     <input type="text" id="searchValue"
                                                            name="searchValue"
+                                                           placeholder="검색어를 입력하세요."
                                                            class="form-control col-6">
                                                     <div class="input-group-append">
                                                         <button class="btn btn-primary"
@@ -310,16 +349,16 @@
                                             <div class="col-lg-2 col-md-2 bg-light p-2">등록기간
                                             </div>
                                             <div class="col-lg-4 col-sm-4 col-md-5 py-2 m-auto-0">
-                                                <div class="input-group daterange-btn form-inline col-lg-12 col-sm-12 col-md-12">
+                                                <div class="input-group form-inline col-lg-12 col-sm-12 col-md-12">
                                                     <input type="text" name="sDate"
                                                            maxlength="8"
-                                                           class="form-control daterange-sdate"
+                                                           class="form-control daterange-sdate datepicker"
                                                            id="sDate"
                                                            placeholder="시작일자">
                                                     <div class="date-hypen"> ~</div>
                                                     <input type="text" name="eDate"
                                                            maxlength="8"
-                                                           class="form-control daterange-edate"
+                                                           class="form-control daterange-edate datepicker"
                                                            id="eDate"
                                                            placeholder="종료일자">
                                                 </div>
@@ -382,14 +421,16 @@
                                 <table class="table table-striped table-md fancy-table">
                                     <thead>
                                     <tr>
-                                        <th class="text-center">상태</th>
+                                        <%--<th class="text-center">기능</th>--%>
+                                        <th class="text-center">접수상태</th>
                                         <th class="text-center">접수일자</th>
                                         <th class="text-center">이관사</th>
                                         <th class="text-center">TID</th>
-                                        <th class="text-center">소속</th>
+                                        <th class="text-left">소속</th>
                                         <th class="text-left">점포/지점명</th>
                                         <th class="text-left">연락처</th>
-                                        <th class="text-center">주소</th>
+                                        <th class="text-left">주소</th>
+                                        <th class="text-left">부가정보</th>
                                     </tr>
                                     </thead>
                                     <tbody id="tableBody">
