@@ -162,8 +162,8 @@
 
                             </ul>
                             <div class="text-center pt-1 pb-1">
-                                <a href="/repairs" class="btn btn-primary btn-lg btn-round">
-                                    View All
+                                <a href="/aslist" class="btn btn-primary btn-lg btn-round">
+                                    단말기 AS 접수내역
                                 </a>
                             </div>
                         </div>

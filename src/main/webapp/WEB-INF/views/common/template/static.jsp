@@ -19,6 +19,50 @@
               "재로그인이 필요하여 로그인 페이지로 이동합니다.")
           window.location.assign('/login');
         }
+
+        console.log($("#sessionTimeOut").val());
+        doTimer($("#sessionTimeOut").val());
+        $(document).on('click', "i[id='sessionRefresh']", function(){
+          clearTimeout(timer);
+          doTimer($("#sessionTimeOut").val());
+        });
+
+        function sessionTimeOut() {
+          return new Promise(function(resolve, reject) {
+            $.get('/sessionTimeOutLogOut.do', function(response) {
+              if (response) {
+                console.log("time2");
+                resolve(response);
+              }
+              reject(new Error("Request is failed"));
+            });
+          });
+        }
+
+        function doTimer(time){
+          let date = new Date(null);
+          if(time){
+            date.setSeconds(time);
+            document.getElementById("sessionTimer").innerHTML = date.toISOString().substr(11,8);
+            if(time == 0){
+              sessionTimeOut().then(function(data){
+                clearTimeout(timer);
+                alertMessage(messageType.type.E, "세션이 만료되었습니다.",
+                    "다시 로그인해주세요", function(){location.href = "/logoutProcess.do";}  )
+                return;
+              }).catch(function(err){
+                console.error(err);
+              });
+
+              return;
+
+            }
+
+            --time;
+            timer = setTimeout(doTimer, 1000, time);
+          }
+          return;
+        }
       });
     </script>
 </head>
@@ -38,6 +82,8 @@
                                     class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                 <div class="d-sm-none d-lg-inline-block" id="user_info">
                     <i class="fa-sharp fa-solid fa-shop"></i> ${member.userName}[${member.userId}]
+                    <input type="hidden" id="sessionTimeOut" name="sessionTimeOut" value=<%=session.getMaxInactiveInterval()%>>
+                    <span id="sessionTimer"></span>
                 </div>
             </a>
                 <div class="dropdown-menu dropdown-menu-right">
@@ -78,11 +124,11 @@
             <ul class="sidebar-menu">
                 <li class="menu-header">고객지원 서비스</li>
                 <li class="nav-item"><a class="nav-link" href="/dashboard">
-                    <i class="far fa-clipboard"></i> <span>Dashboard(샘플)</span></a></li>
+                    <i class="far fa-clipboard"></i> <span>Dashboard</span></a></li>
                 <li class="nav-item dropdown">
                     <a href="/aslist" class="nav-link">
                         <i class="fas fa-tools"></i>
-                        <span>AS 접수내역</span></a>
+                        <span>단말기 AS 접수내역</span></a>
                 </li>
                 <li class="nav-item dropdown">
                     <a href="/repairs" class="nav-link">
