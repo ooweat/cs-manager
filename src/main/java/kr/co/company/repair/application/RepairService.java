@@ -265,7 +265,14 @@ public class RepairService {
     public Map<String, Object> findErrorTop5 (RepairRequest repairRequest) {
         Map<String, Object> response = new HashMap<>();
         List<CommonInfoType> list = repairMapper.findErrorTop5(repairRequest);
+    
+        int sumCount = 0;
+        for(int i = 0; i < list.size(); i++) {
+            sumCount += list.get(i).getCount();
+        }
         response.put("data", list);
+        
+        response.put("size", sumCount);
         return response;
     }
     
