@@ -26,9 +26,9 @@ public class SettingService {
         this.settingMapper = settingMapper;
     }
     
-    public Map<String, Object> findPartnerByCompSeq(int ptnCompSeq) {
+    public Map<String, Object> findPartnerByCompSeq(String ptnCompSeq) {
         Map<String, Object> response = new HashMap<>();
-        List<CommonInfoType> list = settingMapper.findPartnerByCompSeq(String.valueOf(ptnCompSeq));
+        List<CommonInfoType> list = settingMapper.findPartnerByCompSeq(ptnCompSeq);
         response.put("data", list);
         return response;
     }
@@ -36,6 +36,35 @@ public class SettingService {
     public Map<String, Object> findAllTerminalModel() {
         Map<String, Object> response = new HashMap<>();
         List<CommonInfoType> list = settingMapper.findAllTerminalModel();
+        response.put("data", list);
+        return response;
+    }
+    
+    
+    public Map<String, Object> findAllVmModel() {
+        Map<String, Object> response = new HashMap<>();
+        List<CommonInfoType> list = settingMapper.findAllVmModel();
+        response.put("data", list);
+        return response;
+    }
+    
+    public Map<String, Object> findAllRealTrouble() {
+        Map<String, Object> response = new HashMap<>();
+        List<CommonInfoType> list = settingMapper.findAllRealTrouble();
+        response.put("data", list);
+        return response;
+    }
+    
+    public Map<String, Object> findAllActionTrouble() {
+        Map<String, Object> response = new HashMap<>();
+        List<CommonInfoType> list = settingMapper.findAllActionTrouble();
+        response.put("data", list);
+        return response;
+    }
+    
+    public Map<String, Object> findAllTrouble() {
+        Map<String, Object> response = new HashMap<>();
+        List<CommonInfoType> list = settingMapper.findAllTrouble();
         response.put("data", list);
         return response;
     }
@@ -109,12 +138,18 @@ public class SettingService {
         }
     }
     
-    public Map<String, Object> findStatusByCompSeq(String userLevel) {
+    public Map<String, Object> findStatusByCompSeq(String userLevel, String ptnCompSeq) {
+    
         Map<String, Object> response = new HashMap<>();
-        List<SettingRequest> list = new ArrayList<>();
+        PageHelper.startPage(1, 10);
+        Page<CommonInfoType> list = (Page<CommonInfoType>) settingMapper.findStatusByCompSeq(
+            userLevel, ptnCompSeq);
+        response.put("page", new PageNavigation(list));
+        response.put("data", list);
+        
         SettingRequest settingRequest;
         
-        boolean isOP = userLevel.equals("OP");
+        /*boolean isOP = userLevel.equals("OP");
         for (int i = isOP ? 4 : 1; i <= (isOP ? 6 : ProgressStatus.values().length); i++) {
             settingRequest = new SettingRequest(ProgressStatus.valueOf("PROGRESS" + i).getStep(),
                 ProgressStatus.valueOf("PROGRESS" + i).getStatus());
@@ -126,7 +161,7 @@ public class SettingService {
             settingRequest = new SettingRequest(ProgressStatus.valueOf("PROGRESS" + 8).getStep(),
                 ProgressStatus.valueOf("PROGRESS" + 8).getStatus());
             list.add(settingRequest);
-        }
+        }*/
         
         response.put("data", list);
         return response;

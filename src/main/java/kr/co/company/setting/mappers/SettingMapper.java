@@ -9,7 +9,12 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface SettingMapper {
     List<CommonInfoType> findPartnerByCompSeq(String ptnCompSeq);
+    List<CommonInfoType> findStatusByCompSeq(String userLevel, String ptnCompSeq);
     List<CommonInfoType> findAllTerminalModel();
+    List<CommonInfoType> findAllVmModel();
+    List<CommonInfoType> findAllTrouble();
+    List<CommonInfoType> findAllRealTrouble();
+    List<CommonInfoType> findAllActionTrouble();
     List<CommonInfoType> findAllRevision();
     List<CommonInfoType> findAllError(String errorType);
     List<CommonInfoType> findAllCompany();

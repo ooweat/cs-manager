@@ -4,33 +4,69 @@
 <mapper namespace="kr.co.company.setting.mappers.SettingMapper">
   <select id="findPartnerByCompSeq" parameterType="string"
     resultType="kr.co.company.as.domain.CommonInfoType">
-    <if test="ptnCompSeq == '2000'">
-      SELECT COMPANY_SEQ AS seq,
-      USER_ORGANIZATION AS name
-      FROM TB_USER WHERE
-      USER_LEVEL='OP' AND COMPANY_SEQ <![CDATA[<>]]> '2000' GROUP BY COMPANY_SEQ, USER_ORGANIZATION
-      UNION ALL
-      SELECT COMPANY_SEQ AS seq,
-      USER_ORGANIZATION AS name
-      FROM TB_USER
-      WHERE USER_LEVEL='OP' AND USER_ID='ubcn'
-      GROUP BY COMPANY_SEQ, USER_ORGANIZATION
-      ORDER BY seq ASC
-    </if>
+    SELECT COMPANY_SEQ AS seq,
+    USER_ORGANIZATION AS name
+    FROM TB_USER
+    WHERE USER_LEVEL='OP'
     <if test="ptnCompSeq != '2000'">
-      SELECT COMPANY_SEQ AS seq,
-      USER_ORGANIZATION AS name
-      FROM TB_USER
-      WHERE
-      USER_LEVEL='OP' AND COMPANY_SEQ = #{ptnCompSeq}
-      GROUP BY COMPANY_SEQ, USER_ORGANIZATION
+      <choose>
+        <when test="ptnCompSeq == '2001'">
+          AND COMPANY_SEQ BETWEEN '2001' AND '2005'
+        </when>
+        <otherwise>
+          AND COMPANY_SEQ = #{ptnCompSeq}
+        </otherwise>
+      </choose>
     </if>
+    GROUP BY COMPANY_SEQ, USER_ORGANIZATION
+    ORDER BY COMPANY_SEQ ASC
+  </select>
+  <select id="findStatusByCompSeq" parameterType="string"
+    resultType="kr.co.company.as.domain.CommonInfoType">
+    SELECT SEQ AS SEQ,
+    NAME AS NAME
+    FROM TB_PROGRESS_STATUS
+    WHERE 1=1
+    <if test="userLevel == 'OP'">
+      <choose>
+        <when test="ptnCompSeq== '2018'">
+          AND CODE IN ('2', '3', '4', '5', '6', '7', '8')
+        </when>
+      <otherwise>AND CODE IN ('2', '3', '5', '6', '7', '8')</otherwise>
+      </choose>
+
+    </if>
+      ORDER BY CODE
   </select>
   <select id="findAllTerminalModel" resultType="kr.co.company.as.domain.CommonInfoType">
     SELECT TID_SEQ        AS SEQ,
            TID_MODEL_NAME AS NAME
     FROM TB_TERMINAL_MODEL
     ORDER BY TID_SEQ ASC
+  </select>
+  <select id="findAllVmModel" resultType="kr.co.company.as.domain.CommonInfoType">
+    SELECT VM_SEQ        AS SEQ,
+           VM_MODEL_NAME AS NAME
+    FROM TB_VM_MODEL
+    ORDER BY VM_MODEL_NAME ASC
+  </select>
+  <select id="findAllTrouble" resultType="kr.co.company.as.domain.CommonInfoType">
+    SELECT TRB_SEQ  AS SEQ,
+           TRB_NAME AS NAME
+    FROM TB_TROUBLE
+    ORDER BY TRB_NAME ASC
+  </select>
+  <select id="findAllRealTrouble" resultType="kr.co.company.as.domain.CommonInfoType">
+    SELECT RT_SEQ  AS SEQ,
+           RT_NAME AS NAME
+    FROM TB_REAL_TROUBLE
+    ORDER BY RT_NAME ASC
+  </select>
+  <select id="findAllActionTrouble" resultType="kr.co.company.as.domain.CommonInfoType">
+    SELECT AT_SEQ  AS SEQ,
+           AT_NAME AS NAME
+    FROM TB_ACTION_TROUBLE
+    ORDER BY AT_NAME ASC
   </select>
   <select id="findAllRevision" resultType="kr.co.company.as.domain.CommonInfoType">
     SELECT SEQ AS SEQ, NAME AS NAME, R_TYPE AS TYPE

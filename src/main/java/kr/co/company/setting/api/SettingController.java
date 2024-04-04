@@ -41,18 +41,38 @@ public class SettingController {
     }
     
     @GetMapping(value = "/partners/{ptnCompSeq}")
-    public ResponseEntity<Map> findPartnerByCompSeq(@PathVariable final int ptnCompSeq) {
+    public ResponseEntity<Map> findPartnerByCompSeq(@PathVariable final String ptnCompSeq) {
         return ResponseEntity.ok(settingService.findPartnerByCompSeq(ptnCompSeq));
     }
     
-    @GetMapping(value = "/status/{userLevel}")
-    public ResponseEntity<Map> findStatusByCompSeq(@PathVariable final String userLevel) {
-        return ResponseEntity.ok(settingService.findStatusByCompSeq(userLevel));
+    @GetMapping(value = "/asStatus/{userLevel}/{ptnCompSeq}")
+    public ResponseEntity<Map> findStatusByCompSeq(@PathVariable final String userLevel, @PathVariable final String ptnCompSeq) {
+        return ResponseEntity.ok(settingService.findStatusByCompSeq(userLevel, ptnCompSeq));
     }
     
     @GetMapping("/terminal-models")
-    public ResponseEntity<Map> terminalModels() {
+    public ResponseEntity<Map> findAllTerminalModel() {
         return ResponseEntity.ok(settingService.findAllTerminalModel());
+    }
+
+    @GetMapping("/troubles")
+    public ResponseEntity<Map> findAllTrouble() {
+        return ResponseEntity.ok(settingService.findAllTrouble());
+    }
+    
+    @GetMapping("/realTroubles")
+    public ResponseEntity<Map> findAllRealTrouble() {
+        return ResponseEntity.ok(settingService.findAllRealTrouble());
+    }
+    
+    @GetMapping("/actionTroubles")
+    public ResponseEntity<Map> findAllActionTrouble() {
+        return ResponseEntity.ok(settingService.findAllActionTrouble());
+    }
+    
+    @GetMapping("/vm-models")
+    public ResponseEntity<Map> findAllVmModel() {
+        return ResponseEntity.ok(settingService.findAllVmModel());
     }
     
     @GetMapping("/revisions")
