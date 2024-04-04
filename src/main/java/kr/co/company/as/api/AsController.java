@@ -4,9 +4,13 @@ import java.util.Map;
 import kr.co.company.as.application.AsService;
 import kr.co.company.as.application.dto.AsRequest;
 import kr.co.company.as.domain.As;
+import kr.co.company.common.domain.BaseResponse;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,24 +24,30 @@ public class AsController {
         this.asService = asService;
     }
     
-    @GetMapping(value = "/as/as-count")
+    @GetMapping(value = "/aslist/as-count")
     public ResponseEntity<Map> findAsCount(AsRequest asRequest) {
         return ResponseEntity.ok(asService.findAsCount(asRequest));
     }
     
-    @GetMapping(value = "/as/as-top5")
+    @GetMapping(value = "/aslist/as-top5")
     public ResponseEntity<Map> findAsTop5(AsRequest asRequest) {
         return ResponseEntity.ok(asService.findAsTop5(asRequest));
     }
     
-    @GetMapping(value = "/as/aslist")
+    @GetMapping(value = "/aslist")
     public ResponseEntity<Map> findAsList(AsRequest asRequest) {
-        return ResponseEntity.ok(asService.findAllByRequest(asRequest));
+        return ResponseEntity.ok(asService.findAsList(asRequest));
     }
     
-    @GetMapping("/as/{asNo}")
+    @GetMapping("/aslist/{asNo}")
     public ResponseEntity<As> findRepairByAsNo(@PathVariable final String asNo) {
         return ResponseEntity.ok(asService.findAsByAsNo(asNo));
+    }
+    
+    @PatchMapping(value = "/aslist/{asNo}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BaseResponse> patchAs(@PathVariable final String asNo,
+        @RequestBody As as) {
+        return ResponseEntity.ok(asService.patchAs(asNo, as));
     }
     
     

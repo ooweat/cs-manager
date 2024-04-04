@@ -12,7 +12,9 @@ public interface AsMapper {
     List<CommonInfoType> findAsCount(String ptnCompSeq);
     List<As> findAsTop5(String ptnCompSeq);
     
-    List<As> findAllByRequest(AsRequest asRequest);
+    List<As> findAsList(AsRequest asRequest);
     
     As findAsByAsNo(String asNo);
+    
+    boolean patchAs(String asNo, As as);
 }

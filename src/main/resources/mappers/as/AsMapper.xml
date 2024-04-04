@@ -26,18 +26,20 @@
     </choose>
     ORDER BY progress_status
   </select>
-  <select id="findAsTop5" parameterType="kr.co.company.as.application.dto.AsRequest"
+  <select id="findAsTop5" parameterType="string"
     resultType="kr.co.company.as.domain.As">
     SELECT COMP.COMP_NAME AS COMPNAME,
     LIST.AS_NO AS ASNO,
     LIST.REG_TIMESTAMP AS CREATEDATE,
     PROGRESS_STATUS AS PROGRESSSTATUS,
+    TPS.NAME AS PROGRESSSTATUSNAME,
     CASE
     WHEN LIST.PTN_COMP_SEQ = 9999 THEN '이관대기'
     ELSE TU.USER_ORGANIZATION END AS PTNCOMPNAME
     FROM TB_AS_LIST LIST
     LEFT JOIN TB_COMPANY COMP ON LIST.COMP_SEQ = COMP.COMP_SEQ
     LEFT JOIN TB_USER TU ON LIST.PTN_COMP_SEQ = TU.COMPANY_SEQ
+    LEFT JOIN TB_PROGRESS_STATUS TPS ON LIST.PROGRESS_STATUS = TO_CHAR(TPS.SEQ, 'FM999')
     WHERE 1=1
     AND SUPPORT_TYPE = 'A'
     <choose>
@@ -53,11 +55,13 @@
         AND ptn_comp_seq = ${ptnCompSeq}
       </otherwise>
     </choose>
+    GROUP BY COMP.COMP_NAME, LIST.AS_NO, LIST.REG_TIMESTAMP, PROGRESS_STATUS, TPS.NAME, PTN_COMP_SEQ, TU.USER_ORGANIZATION
     ORDER BY LIST.REG_TIMESTAMP DESC
     LIMIT 5
   </select>
-  <select id="findAllByRequest" parameterType="kr.co.company.as.application.dto.AsRequest"
+  <select id="findAsList" parameterType="kr.co.company.as.application.dto.AsRequest"
     resultType="kr.co.company.as.domain.As">
+    -- aslist
     SELECT LIST.AS_NO AS ASNO,
     CASE
     WHEN LIST.PTN_COMP_SEQ = 9999 THEN '이관대기'
@@ -75,6 +79,7 @@
     LIST.CTM_CHARGE AS CTMCHARGE,
     LIST.REPAIR_COST AS REPAIRCOST,
     LIST.CP_TIMESTAMP AS CPTIMESTAMP,
+    DATE_PART('DAY', CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Seoul' - LIST.REG_TIMESTAMP::TIMESTAMP) AS LIMITDAY,
     LIST.DEPOSIT AS DEPOSIT
     FROM TB_AS_LIST LIST
     LEFT JOIN TB_COMPANY COMP ON LIST.COMP_SEQ = COMP.COMP_SEQ
@@ -136,7 +141,44 @@
            LEFT JOIN TB_ACTION_TROUBLE AT
     ON LIST.AT_SEQ = AT.AT_SEQ
       LEFT JOIN TB_TERMINAL_MODEL TM ON LIST.TID_SEQ = TM.TID_SEQ
-      LEFT JOIN TB_PROGRESS_STATUS TPS ON LIST.PROGRESS_STATUS = TPS.CODE
+      LEFT JOIN TB_PROGRESS_STATUS TPS ON LIST.PROGRESS_STATUS = TO_CHAR(TPS.SEQ, 'FM999')
     WHERE AS_NO = #{asNo}
   </select>
+  <update id="patchAs" parameterType="kr.co.company.as.domain.As">
+    UPDATE TB_AS_LIST
+    SET COMP_SEQ=#{compSeq},
+        CTM_NAME=#{ctmName},
+        CTM_PHONE=#{ctmPhone},
+        CTM_PLACE_POST_CODE=#{ctmPlacePostCode},
+        CTM_PLACE_ADDRESS1=#{ctmPlaceAddress1},
+        CTM_PLACE_ADDRESS2=#{ctmPlaceAddress2},
+        CTM_PLACE_NAME=#{ctmPlaceName},
+        CTM_CHARGE=#{ctmCharge},
+        TERMINAL_ID=#{terminalId},
+        VM_SEQ=#{vmSeq},
+        TRB_SEQ=#{trbSeq},
+        REPAIR_COST=#{repairCost},
+        PTN_COMMENT=#{ptnComment},
+        PROGRESS_STATUS=#{progressStatus},
+        GROUP_NUM=#{groupNum},
+        SEQUENCE_NUM=#{sequenceNum},
+        SEQUENCE_LEVEL=#{sequenceLevel},
+        MODIFY_TIMESTAMP=NOW(),
+        PTN_COMP_SEQ=#{ptnCompSeq},
+        RT_SEQ=#{rtSeq},
+        AT_SEQ=#{atSeq},
+        MODEM_SERIAL=#{modemSerial},
+        TRANSFER_COST=#{transferCost},
+        VP_TIMESTAMP=#{vpTimestamp},
+        CP_TIMESTAMP=#{cpTimestamp},
+        PTN_FINALE=#{ptnFinale},
+        MODIFY_USER=#{modifyUser},
+        DEPOSIT=#{deposit},
+        DEPOSIT_DATE=#{depositDate},
+        CASE_CHANGE=#{caseChange},
+        TID_SEQ=#{tidSeq},
+        PTN_CP_DATE=#{ptnCpDate},
+        PTN_MEMO=#{ptnMemo}
+    WHERE AS_NO = #{asNo}
+  </update>
 </mapper>
