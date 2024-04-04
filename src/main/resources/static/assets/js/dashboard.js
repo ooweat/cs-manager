@@ -7,7 +7,10 @@ function init(ptnCompSeq) {
     callUsageListByTerminalModel(); //단말기 모델별 추이
     callErrorTop5('RT');
     callErrorTop5('RA');
+    $('#leftCard').show();
     //callRepairTop5();
+  } else {
+    $('#leftCard').hide();
   }
   callUsageListByAs(ptnCompSeq);
   callAsTop5(ptnCompSeq);
@@ -22,7 +25,7 @@ function callAsTop5(ptnCompSeq) {
 
   $.ajax({
     type: "GET",
-    url: "/api/as/as-top5" + queryString,
+    url: "/api/aslist/as-top5" + queryString,
     cache: false,
     success: function (cmd) {
       console.log(cmd);
@@ -57,7 +60,7 @@ function callUsageListByAs(ptnCompSeq) {
   ;
   $.ajax({
     type: "GET",
-    url: "/api/as/as-count" + queryString,
+    url: "/api/aslist/as-count" + queryString,
     cache: false,
     success: function (cmd) {
       //console.log(cmd);
@@ -219,11 +222,23 @@ function callErrorTop5(type) {
       let html = '';
       let values = [];
       let titles = [];
+      let colors = ['#70abe7', '#63ed7a', '#ffa426', '#fc544b', '#6777ef'];
       if (cmd.data.length > 0) {
+        console.log(cmd.data);
         for (let i = 0; i < cmd.data.length; i++) {
           values.push(cmd.data[i].count);
           titles.push(cmd.data[i].name);
+          html += '<div class="text-center p-1">';
+          html += '<div class="btn" style="background: ' + colors[i] + '"></div>';
+          html += '<div class="mt-1 font-weight-bold">' + cmd.data[i].name + '</div>';
+          html += '<div class="text-muted text-small"><span class="text-primary"></span> '
+              + (cmd.size * (cmd.data[i].count/1000)).toFixed(1) + ' %'
+              + '</div>';
+          html += '</div>';
         }
+
+        $('#' + type + '-top5').html(html);
+
         console.log(values);
         let myChart = new Chart(ctx, {
           type: 'doughnut',
@@ -233,19 +248,23 @@ function callErrorTop5(type) {
               label: ["%"],
               data: values,
               borderWidth: 1.2,
-              backgroundColor: [
-                '#191d21',
-                '#63ed7a',
-                '#ffa426',
-                '#fc544b',
-                '#6777ef',
-              ],
+              backgroundColor: colors,
             }],
           },
           options: {
             responsive: false,
             legend: {
-              position: 'left',
+              display: false,
+              /*position: 'left',
+              labels: {
+                generateLabels: (chart) => {
+                  const datasets = chart.data.datasets;
+                  return datasets[0].data.map((data, i) => ({
+                    text: `${chart.data.labels[i]} (${(sumValue * (data/1000)).toFixed(1)}%)`,
+                    fillStyle: datasets[0].backgroundColor[i],
+                    index: i
+                  }))},
+                },*/
             },
             tooltip: {
               mode: 'index',
@@ -255,13 +274,20 @@ function callErrorTop5(type) {
               displayColors: false,
               intersect: false,
             },
+            tooltips: {
+              callbacks: {
+                label: function (tooltipItem, data) {
+                  let tooltipValue = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                  return parseInt((cmd.size * (tooltipValue/1000)).toFixed(1)).toLocaleString() + "%";
+                }
+              }
+            },
           }
         });
 
       } else {
         html += '';
       }
-      $('#' + type + '-top5').html(html);
       loadingStop();
     }, // success
     error: function (xhr, status) {
@@ -271,7 +297,7 @@ function callErrorTop5(type) {
   });
 }
 
-function callGroupInfo(orginUserSeq) {
+/*function callGroupInfo(orginUserSeq) {
   $('#paramUserSeq > option').remove();
 
   $.ajax({
@@ -319,7 +345,7 @@ function callGroupInfo(orginUserSeq) {
       location.href("/");
     }
   });
-}
+}*/
 
 /*function updateCouponStat(couponNo, couponStat, obj){
     loadingStart();

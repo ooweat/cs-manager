@@ -21,7 +21,7 @@ public class HomeController {
         this.commonService = commonService;
     }
     
-    @GetMapping(value = {"/", "/login", "/logout"})
+    @GetMapping(value = {"/login", "/logout"})
     public ModelAndView login(HttpSession session) {
         session.invalidate();   //기존 session 정보 invalid
         return new ModelAndView("/login");
@@ -36,7 +36,7 @@ public class HomeController {
         return workbook;
     }
     
-    @GetMapping(value = "/dashboard")
+    @GetMapping(value = {"/", "/dashboard"})
     public ModelAndView dashboard() {
         return new ModelAndView("/dashboard.loading");
     }
