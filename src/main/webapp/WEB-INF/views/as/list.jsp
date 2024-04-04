@@ -90,10 +90,9 @@
 
         $.ajax({
           type: "GET",
-          url: "/api/as/aslist" + queryString,
+          url: "/api/aslist" + queryString,
           cache: false,
           success: function (cmd) {
-            console.log(cmd);
             $('#searchCount').text("(" + numberWithCommas(cmd.page.total) + "건)");
             let html = '';
             if (cmd.data.length > 0) {
@@ -177,10 +176,6 @@
               $('#checkbox-all').prop("checked", true);
               $('#partnerStandBy').prop("checked", true);
               let html = '';
-              html += '<div class="custom-control custom-checkbox mr-1">';
-              html += '<input type="checkbox" data-checkboxes="partnerGroup" class="custom-control-input" name="partnerGroup"';
-              html += 'value="9999" id="partnerGroup_9999" checked="">';
-              html += '<label class="custom-control-label" for="partnerGroup_9999">이관대기</label></div>';
               for (let i = 0; i < cmd.data.length; i++) {
                 html += '<div class="custom-control custom-checkbox mr-1">';
                 html += '<input type="checkbox" data-checkboxes="partnerGroup" class="custom-control-input" name="partnerGroup" ';
@@ -205,7 +200,7 @@
       function callProgress() {
         $.ajax({
           type: "GET",
-          url: "/api/settings/status/${member.userLevel}",
+          url: "/api/settings/asStatus/${member.userLevel}/${member.companySeq}",
           cache: false,
           success: function (cmd) {
             if (cmd.data.length > 0) {
@@ -215,10 +210,10 @@
                 html += '<div class="custom-control custom-checkbox mr-1">';
                 html += '<input type="checkbox" data-checkboxes="progressGroup" class="custom-control-input" name="progressGroup" ';
                 html += 'onclick="changeCheckboxAll($(this))" ';
-                html += 'value="' + cmd.data[i].page + '" id="progressGroup_' + cmd.data[i].page
+                html += 'value="' + cmd.data[i].seq + '" id="progressGroup_' + cmd.data[i].seq
                     + '" checked="">';
-                html += '<label class="custom-control-label" for="progressGroup_' + cmd.data[i].page
-                    + '">' + cmd.data[i].searchValue + '</label></div>';
+                html += '<label class="custom-control-label" for="progressGroup_' + cmd.data[i].seq
+                    + '">' + cmd.data[i].name + '</label></div>';
               }
               $('#progressGroup').append(html);
             }
@@ -406,7 +401,7 @@
                         <div class="p-2 pb-1 mt-0 ml-2 mr-2">
                             <div class="float-left">
                                 <h6 class="pt-0">조회결과 <span class="text-muted"
-                                                            id="searchCount"></span>
+                                                            id="searchCount">(0 건)</span>
                                 </h6>
                                 <%--<code>※정렬순서요청(오름차순): 불량내역, 수리내역, 메인REV, 서브REV, ICREV</code>--%>
                             </div>
@@ -434,12 +429,11 @@
                                     </tr>
                                     </thead>
                                     <tbody id="tableBody">
-
+                                    <tr><td>조회를 눌러 검색해주세요.</td></tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                        <%--테이블--%>
                         <div class="card-footer text-center border-top">
                             <nav class="d-inline-block">
                                 <ul class="pagination justify-content-center">
