@@ -209,7 +209,8 @@ public class RepairService {
             
             bodyCell = bodyRow.createCell(colno++);
             bodyCell.setCellStyle(bodyStyle);
-            bodyCell.setCellValue(list.get(i).getSamFlag() == 'Y' ? "있음" : "없음");
+            //2024.04.25 twkim 요청사항: Flag 에 따라 o, x (소문자)로 표시
+            bodyCell.setCellValue(list.get(i).getSamFlag() == 'Y' ? "o" : "x");
             
             bodyCell = bodyRow.createCell(colno++);
             bodyCell.setCellStyle(bodyStyle);
