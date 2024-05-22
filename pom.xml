@@ -12,7 +12,7 @@
   <groupId>kr.co.company</groupId>
   <artifactId>cs</artifactId>
   <version>0.0.1</version>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
   <name>support</name>
   <description>CS 관리 서비스</description>
   <properties>
