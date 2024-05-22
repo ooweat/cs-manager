@@ -5,19 +5,18 @@
     <!-- LOG_ROOT_LEVEL 의 기본값은 INFO -->
     <property name="LOG_ROOT_LEVEL" value="${logging.root.level}"/>
     <!-- LOG_ROOT_PATH 의 기본 고정값은 -->
-    <property name="LOG_FILE_PATH" value="${logging.file.path}"/>
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>[%d{HH:mm:ss}] [%-5level] [%M\(%L\)] - %msg%n</Pattern>
         </layout>
     </appender>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_FILE_PATH}/${project.name}.log</file>
+        <file>../logs/${project.name}.log</file>
         <encoder>
             <Pattern>[%d{HH:mm:ss}] [%-5level] [%M\(%L\)] - %msg%n</Pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_FILE_PATH}/${project.name}-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>../logs/${project.name}-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>31</maxHistory>
         </rollingPolicy>
     </appender>
