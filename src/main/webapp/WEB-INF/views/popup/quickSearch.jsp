@@ -131,15 +131,16 @@
                 element += '</div>';
                 element += '<div class="accordion-body collapse" id="panel-body-' + i + '" data-parent="#accordion" style="">';
                 element += '<p class="mb-0">'
-                    + '접수: ' + data[i].regDate + '<br>'
-                    + '사업자: ' + data[i].businessNo + ' / ' + data[i].compName + '<br>'
+                    + '접수일자: ' + data[i].regDate + '<br>'
+                    + '사업자정보: ' + data[i].businessNo + ' / ' + data[i].compName + '<br>'
                     + '자판기모델: ' + data[i].vmModelName + '<br>'
                     + '단말기모델: ' + data[i].tidModelName + '<br>'
                     + '접수내용: ' + data[i].trbName + '<br>'
                     + '원인: ' + data[i].rtName + '<br>'
                     + '처리: ' + data[i].atName + '<br>'
-                    + '유상유무: ' + (data[i].ctmCharge =='Y' ? "유상" : "무상") + '<br>'
+                    + '유상여부: ' + (data[i].ctmCharge =='Y' ? "유상" : "무상") + '<br>'
                     + '발생비용: ' + data[i].repairCost + '<br>'
+                    + '추가메모: ' + data[i].memo + '<br>'
                     + '</p>';
                 element += '</div>';
                 element += '</div>';
@@ -238,10 +239,6 @@
                                    role="tab"
                                    aria-controls="payments" aria-selected="false">카드사 가맹점정보
                                     조회</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="contact-tab3" data-toggle="tab" href="#"
-                                   role="tab" aria-controls="contact" aria-selected="false">샘플</a>
                             </li>
                         </ul>
                         <div class="tab-content px-4" id="myTabContent2">
@@ -355,10 +352,6 @@
                                     </tr>
                                     </tbody>
                                 </table>
-                            </div>
-                            <div class="tab-pane fade" id="contact3" role="tabpanel"
-                                 aria-labelledby="contact-tab3">
-                                준비중입니다.
                             </div>
                         </div>
                     </div>
