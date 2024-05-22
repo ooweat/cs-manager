@@ -22,6 +22,22 @@
     <script type="text/javascript" src="/assets/js/jquery.js"></script>
     <script type="text/javascript" src="/assets/js/dashboard.js"></script>
     <script type="text/javascript" src="/assets/js/custom.js"></script>
+    <script type="text/javascript">
+      function openPopup() {
+        const url = '/quickSearch';
+        const width = '850';
+        const height = '800';
+
+        let popupX = Math.round((window.screen.width/2) - (width/2));
+        let popupY = Math.round((window.screen.height/2) - (height/2));
+
+        // 윈도우 팝업창의 스타일 지정
+        let featureWindow = "width=" + width + ", height="+height
+            + ", left=" + popupX + ", top=" + popupY;
+        return window.open(url, '', featureWindow);
+
+      }
+    </script>
 <body onload="init('${member.companySeq}');">
 <div class="main-content">
     <section class="section">
@@ -90,6 +106,17 @@
             <div class="col-lg-6 col-md-12 col-12 col-sm-12">
                 <div class="section-header col-lg-12 col-md-12 col-12 col-sm-12">
                     <h1>AS</h1>
+                </div>
+                <div class="card card-large-icons">
+                    <div class="card-icon bg-primary text-white">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="card-body">
+                        <h4>단말기 i</h4>
+                        <p>단말기와 관련된 정보를 축약해서 볼 수 있습니다.</p>
+                        <a href="#" onclick="openPopup();" class="card-cta">팝업 열기 <i
+                                class="fas fa-chevron-right"></i></a>
+                    </div>
                 </div>
                 <div class="card card-statistic-2">
                     <div class="card-stats">

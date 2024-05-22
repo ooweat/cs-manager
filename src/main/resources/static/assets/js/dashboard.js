@@ -28,7 +28,7 @@ function callAsTop5(ptnCompSeq) {
     url: "/api/aslist/as-top5" + queryString,
     cache: false,
     success: function (cmd) {
-      console.log(cmd);
+      //console.log(cmd);
       let html = '';
       let progressStatus = '';
       for (let i = 0; i < cmd.data.length; i++) {
@@ -224,7 +224,7 @@ function callErrorTop5(type) {
       let titles = [];
       let colors = ['#70abe7', '#63ed7a', '#ffa426', '#fc544b', '#6777ef'];
       if (cmd.data.length > 0) {
-        console.log(cmd.data);
+        //console.log(cmd.data);
         for (let i = 0; i < cmd.data.length; i++) {
           values.push(cmd.data[i].count);
           titles.push(cmd.data[i].name);
@@ -239,7 +239,7 @@ function callErrorTop5(type) {
 
         $('#' + type + '-top5').html(html);
 
-        console.log(values);
+        //console.log(values);
         let myChart = new Chart(ctx, {
           type: 'doughnut',
           data: {

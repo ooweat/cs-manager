@@ -36,6 +36,11 @@ public class HomeController {
         return workbook;
     }
     
+    @GetMapping("/quickSearch")
+    public ModelAndView quickSearch() {
+        return new ModelAndView("/popup/quickSearch.empty");
+    }
+    
     @GetMapping(value = {"/", "/dashboard"})
     public ModelAndView dashboard() {
         return new ModelAndView("/dashboard.loading");
