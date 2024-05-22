@@ -65,7 +65,7 @@
 
       function callterminalInfoApi(terminalId) {
         $.ajax({
-          url: 'https://localhost:17881/biz/terminals/' + terminalId,
+          url: 'https://devapi.ubcn.co.kr:17881/biz/terminals/' + terminalId,
           type: 'GET',
           timeout: 3000,
           success: function (data) {
@@ -89,7 +89,7 @@
 
       function callAsListApi(terminalId) {
         $.ajax({
-          url: 'https://localhost:17881/support/asList/terminals/' + terminalId,
+          url: 'https://devapi.ubcn.co.kr:17881/support/asList/terminals/' + terminalId,
           type: 'GET',
           success: function (data) {
             console.log(data);
@@ -160,7 +160,7 @@
 
       function callPaymentApi(terminalId) {
         $.ajax({
-          url: 'https://localhost:17881/biz/payments/all/terminals/' + terminalId,
+          url: 'https://devapi.ubcn.co.kr:17881/biz/payments/all/terminals/' + terminalId,
           type: 'GET',
           success: function (data) {
             $('#pgMerchantNo td:nth-child(2)').text(data.pgMerchantNo);
