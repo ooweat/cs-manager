@@ -32,7 +32,8 @@ function callAsTop5(ptnCompSeq) {
       let html = '';
       let progressStatus = '';
       for (let i = 0; i < cmd.data.length; i++) {
-        html += '<li class="media"><img class="mr-3 rounded-circle" width="50" src="assets/img/avatar/avatar-4.png" alt="avatar">'
+        html += '<li class="media">'
+            + '<img class="mr-3 rounded-circle" width="50" src="assets/img/avatar/avatar-4.png" alt="avatar">'
             + '<div class="media-body"> '
             + '<div class="badge badge-pill badge-danger mb-1 float-right">'
             + convertProgressStatus(cmd.data[i].progressStatus) + '</div> '

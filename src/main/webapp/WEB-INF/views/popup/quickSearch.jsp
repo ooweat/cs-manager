@@ -9,6 +9,13 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
           name="viewport">
+    <style type="text/css">
+      #payments-table-body td, #tStatus-table-body td {
+        padding: 0px 20px !important;
+        height: 100%;
+        font-size: 12px;
+      }
+    </style>
     <script type="text/javascript" src="/assets/js/jquery.js"></script>
     <script type="text/javascript" src="/assets/js/custom.js"></script>
     <script type="text/javascript">
@@ -47,8 +54,12 @@
           switch (service) {
             case 'init':
               callterminalInfoApi(terminalId);
+              callStatusApi(terminalId);
               callAsListApi(terminalId);
               callPaymentApi(terminalId);
+              break;
+            case 'status':
+              callStatusApi(terminalId);
               break;
             case 'terminalInfo':
               callterminalInfoApi(terminalId);
@@ -65,21 +76,114 @@
 
       function callterminalInfoApi(terminalId) {
         $.ajax({
-          url: 'https://devapi.ubcn.co.kr:17881/biz/terminals/' + terminalId,
+          url: 'https://devapi.ubcn.co.kr:17881/vmms/terminals/' + terminalId,
           type: 'GET',
           timeout: 3000,
           success: function (data) {
-            if(data == ''){
-              alert('등록된 단말기 정보가 없습니다.');
-              $('#terminalId').focus();
-              return false;
-            }
-            $('#businessNo').text(data.businessNo);
-            $('#merchantName').text(data.merchantName);
-            $('#presentName').text(data.presentName);
-            $('#terminalIdTitle').text(" / " + data.terminalId);
-            $('#terminalInfoContent').text(data.toString());
+            console.log(data);
+            $('#terminalInfo-body').empty();
+            if (data != '') {
+              let element = '';
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">사업자정보</label>';
+              element += '<div class="col-sm-9">';
+              element += '<input type="text" class="form-control" value="' + data.businessNo + ' ('
+                  + data.bizType + '/' + data.presentName + ')" readonly>';
+              element += '</div>';
+              element += '</div>';
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">자판기모델/코드</label>';
+              element += '<div class="col-sm-9">';
+              element += '<input type="text" class="form-control" value="' + data.model + ' ('
+                  + data.code + ')" readonly>';
+              element += '</div>';
+              element += '</div>';
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">모뎀</label>';
+              element += '<div class="col-sm-9">';
+              element += '<input type="text" class="form-control" value="' + data.modem + ' ('
+                  + data.modemInfo + ')" readonly>';
+              element += '</div>';
+              element += '</div>';
 
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">소속</label>';
+              element += '<div class="col-sm-9">';
+              element += '<input type="text" class="form-control" value="' + data.company
+                  + '" readonly>';
+              element += '</div>';
+              element += '</div>';
+
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">조직루트</label>';
+              element += '<div class="col-sm-9">';
+              element += '<input type="text" class="form-control" value="' + data.organizationPath
+                  + '" readonly>';
+              element += '</div>';
+              element += '</div>';
+
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">사용자명(VMMS)</label>';
+              element += '<div class="col-sm-9">';
+              element += '<input type="text" class="form-control" value="' + data.userName + ' ('
+                  + data.userId + ')" readonly>';
+              element += '</div>';
+              element += '</div>';
+
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">설치위치</label>';
+              element += '<div class="col-sm-9">';
+              element += '<input type="text" class="form-control" value="' + data.place + ' ('
+                  + data.placeCode + '/' + data.placeNo + ')" readonly>';
+              element += '</div>';
+              element += '</div>';
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">메모</label>';
+              element += '<div class="col-sm-9">';
+              element += '<textarea class="form-control" rows="10" style="height: 100% !important;" readonly>' + data.memo +'</textarea> <br>'
+              element += '</div>';
+              element += '</div>';
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">CS메모</label>';
+              element += '<div class="col-sm-9">';
+              element += '<textarea class="form-control" rows="10" style="height: 100% !important;" readonly>' + data.csMemo +'</textarea> <br>'
+              element += '</div>';
+              element += '</div>';
+              $('#terminalInfo-body').append(element);
+            } else {
+              $('#terminalInfo-body').append('<div class="page-description">단말기 정보가 없습니다.</div>');
+            }
+          },
+          error: function () {
+            console.log('error');
+          }
+        });
+      }
+
+      function callStatusApi(terminalId) {
+        $.ajax({
+          url: 'https://devapi.ubcn.co.kr:17881/vmms/terminals/' + terminalId + '/status',
+          type: 'GET',
+          success: function (data) {
+            console.log(data);
+            $('#tStatus-table-body').empty();
+            if (data.length > 0) {
+              let element = '';
+              for (let i = 0; i < data.length; i++) {
+                element += '<tr>';
+                element += '<td>' + data[i].responseDate.substring(11) + '</td>';
+                element += '<td>' + data[i].pdError + '</td>';
+                element += '<td>' + data[i].soldOut + '</td>';
+                element += '<td>' + data[i].controlError + '</td>';
+                element += '</tr>';
+              }
+
+              $('#tStatus-table-body').append(element);
+            } else {
+              $('#tStatus-table-body').append(
+                  '<div class="page-description">상태정보 수신 이력이 없습니다.</div>');
+            }
+            //
           },
           error: function () {
             console.log('error');
@@ -93,11 +197,11 @@
           type: 'GET',
           success: function (data) {
             console.log(data);
-            if(data.length > 0) {
+            $('#accordion').empty();
+            if (data.length > 0) {
               let element = '';
-              let progressStatus ='';
-              $('#accordion').empty();
-              for(let i = 0; i < data.length; i++) {
+              let progressStatus = '';
+              for (let i = 0; i < data.length; i++) {
                 switch (data[i].progressStatus) {
                   case '1':
                     progressStatus = '접수신청';
@@ -125,32 +229,36 @@
                     break;
                 }
                 element += '<div class="accordion">';
-                element += '<div class="accordion-header collapsed" role="button" data-toggle="collapse" data-target="#panel-body-' + i + '" aria-expanded="false">';
-                element += '<h4>' + data[i].regDate + ' (' + '진행상태: ' + progressStatus + ')'
+                element += '<div class="accordion-header collapsed" role="button" data-toggle="collapse" data-target="#panel-body-'
+                    + i + '" aria-expanded="false">';
+                element += '<h4>#' + data[i].regDate + ' (' + '진행상태: ' + progressStatus + ')'
                     + '</h4>';
                 element += '</div>';
-                element += '<div class="accordion-body collapse" id="panel-body-' + i + '" data-parent="#accordion" style="">';
+                element += '<div class="accordion-body collapse" id="panel-body-' + i
+                    + '" data-parent="#accordion" style="">';
                 element += '<p class="mb-0">'
-                    + '접수일자: ' + data[i].regDate + '<br>'
-                    + '사업자정보: ' + data[i].businessNo + ' / ' + data[i].compName + '<br>'
-                    + '자판기모델: ' + data[i].vmModelName + '<br>'
-                    + '단말기모델: ' + data[i].tidModelName + '<br>'
-                    + '접수내용: ' + data[i].trbName + '<br>'
-                    + '원인: ' + data[i].rtName + '<br>'
-                    + '처리: ' + data[i].atName + '<br>'
-                    + '유상여부: ' + (data[i].ctmCharge =='Y' ? "유상" : "무상") + '<br>'
-                    + '발생비용: ' + data[i].repairCost + '<br>'
-                    + '추가메모: ' + data[i].memo + '<br>'
+                    + '*1. 접수일자: ' + data[i].regDate + '<br>'
+                    + '*2. 사업자정보: ' + data[i].businessNo + ' / ' + data[i].compName + '<br>'
+                    + '*3. 자판기모델: ' + data[i].vmModelName + '<br>'
+                    + '*4. 단말기모델: ' + data[i].tidModelName + '<br>'
+                    + '*5. 접수내용: ' + data[i].trbName + '<br>'
+                    + '*6. 원인: ' + data[i].rtName + '<br>'
+                    + '*7. 처리: ' + data[i].atName + '<br>'
+                    + '*8. 유상여부: ' + (data[i].ctmCharge == 'Y' ? "유상" : "무상") + '<br>'
+                    + '*9. 발생비용: ' + data[i].repairCost + '<br>'
+                    + '*10. 추가메모: '
+                    + '<textarea class="form-control" rows="10" style="height: 100% !important;" readonly>'
+                    + data[i].memo
+                    +'</textarea> <br>'
                     + '</p>';
                 element += '</div>';
                 element += '</div>';
               }
 
               $('#accordion').append(element);
+            } else {
+              $('#accordion').append('<div class="page-description">AS 이력이 없습니다.</div>');
             }
-
-
-
           },
           error: function () {
             console.log('error');
@@ -163,22 +271,89 @@
           url: 'https://devapi.ubcn.co.kr:17881/biz/payments/all/terminals/' + terminalId,
           type: 'GET',
           success: function (data) {
-            $('#pgMerchantNo td:nth-child(2)').text(data.pgMerchantNo);
-            $('#tmn td:nth-child(2)').text(data.tmn);
-            $('#tmn td:nth-child(3)').text(data.tmnRF);
-            $('#csb td:nth-child(2)').text(data.csb);
-            $('#csb td:nth-child(3)').text(data.csbRF);
-            $('#railPlus td:nth-child(2)').text(data.railPlus);
-            $('#railPlus td:nth-child(3)').text(data.railPlusRF);
-            $('#payco td:nth-child(2)').text(data.payco);
-            $('#payco td:nth-child(3)').text(data.paycoRF);
-            $('#kcash td:nth-child(2)').text(data.kcash);
-            $('#kakaoPayCard td:nth-child(2)').text(data.kakaoPayCard);
-            $('#kakaoPayMoney td:nth-child(2)').text(data.kakaoPayMoney);
-            $('#zeroPay td:nth-child(2)').text(data.zeroPay);
-            $('#zeroPay td:nth-child(3)').text(data.zeroPayRF);
-            $('#naverPay td:nth-child(2)').text(data.bcNaverPay);
+            console.log(data);
 
+            $('#payments-body').empty();
+            if (data != '') {
+              let element = '';
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">신용</label>';
+              element += '<div class="col-sm-9">';
+              element += '<input type="text" class="form-control" value="' + data.pgMerchantNo
+                  + '" readonly>';
+              element += '</div>';
+              element += '</div>';
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">티머니</label>';
+              element += '<div class="col-sm-9">';
+              element += '<input type="text" class="form-control" value="' + data.tmn
+                  + ' (' + data.tmnRF + ')" readonly>';
+              element += '</div>';
+              element += '</div>';
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">캐시비</label>';
+              element += '<div class="col-sm-9">';
+              element += '<input type="text" class="form-control" value="' + data.csb
+                  + ' (' + data.csbRF + ')" readonly>';
+              element += '</div>';
+              element += '</div>';
+
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">레일플러스</label>';
+              element += '<div class="col-sm-9">';
+              element += '<input type="text" class="form-control" value="' + data.railPlus
+                  + ' (' + data.railPlusRF + ')" readonly>';
+              element += '</div>';
+              element += '</div>';
+
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">페이코</label>';
+              element += '<div class="col-sm-9">';
+              element += '<input type="text" class="form-control" value="' + data.payco
+                  + ' (' + data.paycoRF + ')" readonly>';
+              element += '</div>';
+              element += '</div>';
+
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">kCash</label>';
+              element += '<div class="col-sm-9">';
+              element += '<input type="text" class="form-control" value="' + data.kcash
+                  + ' (' + data.kcashRF + ')" readonly>';
+              element += '</div>';
+              element += '</div>';
+
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">카카오페이카드</label>';
+              element += '<div class="col-sm-9">';
+              element += '<input type="text" class="form-control" value="' + data.kakaoPayCard
+                  + '" readonly>';
+              element += '</div>';
+              element += '</div>';
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">카카오페이머니</label>';
+              element += '<div class="col-sm-9">';
+              element += '<input type="text" class="form-control" value="' + data.kakaoPayMoney
+                  + '" readonly>';
+              element += '</div>';
+              element += '</div>';
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">제로페이</label>';
+              element += '<div class="col-sm-9">';
+              element += '<input type="text" class="form-control" value="' + data.zeroPay
+                  + ' (' + data.zeroPayRF + ')" readonly>';
+              element += '</div>';
+              element += '</div>';
+              element += '<div class="form-group row mb-1">';
+              element += '<label class="col-sm-3 col-form-label align-content-center text-right">네이버페이</label>';
+              element += '<div class="col-sm-9">';
+              element += '<input type="text" class="form-control" value="' + data.bcNaverPay
+                  + '" readonly>';
+              element += '</div>';
+              element += '</div>';
+              $('#payments-body').append(element);
+            } else {
+              $('#payments-body').append('<div class="page-description">가맹점 정보가 없습니다.</div>');
+            }
           },
           error: function () {
             console.log('error');
@@ -228,10 +403,16 @@
                                    aria-selected="true">단말기정보</a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" id="tStatus-tab" data-toggle="tab"
+                                   href="#tStatus"
+                                   role="tab" aria-controls="tStatus" aria-selected="true">
+                                    오늘상태조회</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" id="asList-tab" data-toggle="tab"
                                    href="#asList"
-                                   role="tab" aria-controls="asList" aria-selected="true">AS
-                                    이력조회</a>
+                                   role="tab" aria-controls="asList" aria-selected="true">
+                                    AS 이력조회</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="payments-tab" data-toggle="tab"
@@ -243,41 +424,31 @@
                         </ul>
                         <div class="tab-content px-4" id="myTabContent2">
                             <div class="tab-pane fade active show" id="terminalInfo" role="tabpanel"
-
                                  aria-labelledby="terminalInfo-tab">
-                                <div class="col-12 col-md-12 col-lg-12">
-                                    <div class="card profile-widget">
-                                        <div class="profile-widget-header">
-                                            <div class="profile-widget-items">
-                                                <div class="profile-widget-item">
-                                                    <div class="profile-widget-item-label">사업자번호
-                                                    </div>
-                                                    <div class="profile-widget-item-value"
-                                                         id="businessNo"></div>
-                                                </div>
-                                                <div class="profile-widget-item">
-                                                    <div class="profile-widget-item-label">가맹점명
-                                                    </div>
-                                                    <div class="profile-widget-item-value"
-                                                         id="merchantName"></div>
-                                                </div>
-                                                <div class="profile-widget-item">
-                                                    <div class="profile-widget-item-label">대표자
-                                                    </div>
-                                                    <div class="profile-widget-item-value"
-                                                         id="presentName"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="profile-widget-description">
-                                            <div class="profile-widget-name">단말기 정보
-                                                <div class="text-muted d-inline font-weight-normal" id="terminalIdTitle"></div>
-                                            </div>
-                                            <p id="terminalInfoContent"></p>
+                                <div class="col-10 col-md-10 col-lg-10 m-auto ">
+                                    <div class="card">
+                                        <div class="card-body" id="terminalInfo-body">
+
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <div class="tab-pane fade" id="tStatus" role="tabpanel"
+                                 aria-labelledby="tStatus-tab">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">수집시간</th>
+                                        <th scope="col">PDERROR</th>
+                                        <th scope="col">품절정보</th>
+                                        <th scope="col">고장정보</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="tStatus-table-body"></tbody>
+                                </table>
+                            </div>
+
+
                             <div class="tab-pane fade" id="asList" role="tabpanel"
                                  aria-labelledby="asList-tab">
                                 <div class="card">
@@ -285,13 +456,18 @@
                                         <div id="accordion"></div>
                                     </div>
                                 </div>
-
-
                             </div>
 
                             <div class="tab-pane fade" id="payments" role="tabpanel"
                                  aria-labelledby="payments-tab">
-                                <table class="table table-striped">
+                                <div class="col-10 col-md-10 col-lg-10 m-auto ">
+                                    <div class="card">
+                                        <div class="card-body" id="payments-body">
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <%--<table class="table table-striped">
                                     <thead>
                                     <tr>
                                         <th scope="col">카드(매입)사</th>
@@ -351,15 +527,14 @@
                                         <td>-</td>
                                     </tr>
                                     </tbody>
-                                </table>
+                                </table>--%>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-</div>
-</section>
+    </section>
 </div>
 </body>
 </html>

@@ -275,3 +275,6 @@ table.loading tbody:after {
 .title-i-line-height{
     line-height: 10px;
 }
+.align-content-center{
+    align-content: center;
+}
