@@ -49,7 +49,7 @@
         //callList(1);
       }
 
-      function callList(page) {
+      function callList(page, type) {
         if ($("#searchType").val() == "0" && $("#searchValue").val() != "") {
           alert("검색조건을 선택해주세요.");
           return;
@@ -90,73 +90,80 @@
 
         $.ajax({
           type: "GET",
-          url: "/api/aslist" + queryString,
+          url: type == 'html' ? "/api/aslist" + queryString : "/api/aslist/excel" + queryString,
           cache: false,
           success: function (cmd) {
-            $('#searchCount').text("(" + numberWithCommas(cmd.page.total) + "건)");
-            let html = '';
-            if (cmd.data.length > 0) {
-              for (let i = 0; i < cmd.data.length; i++) {
-                let progressStatusColor = '';
-                switch (cmd.data[i].progressStatus) {
-                  case '1':
-                    progressStatusColor = 'badge badge-primary';
-                    break;
+            console.log(cmd.page);
+            if (type == 'html') {
+              $('#searchCount').text("(" + numberWithCommas(cmd.page.total) + "건)");
+              let html = '';
+              if (cmd.data.length > 0) {
+                for (let i = 0; i < cmd.data.length; i++) {
+                  let progressStatusColor = '';
+                  switch (cmd.data[i].progressStatus) {
+                    case '1':
+                      progressStatusColor = 'badge badge-primary';
+                      break;
                     case '2':
-                    progressStatusColor = 'badge badge-light';
-                    break;
+                      progressStatusColor = 'badge badge-light';
+                      break;
                     case '3':
-                    progressStatusColor = 'badge badge-primary';
-                    break;
+                      progressStatusColor = 'badge badge-primary';
+                      break;
                     case '4':
-                    progressStatusColor = 'badge badge-warning';
-                    break;
+                      progressStatusColor = 'badge badge-warning';
+                      break;
                     case '5':
-                    progressStatusColor = 'badge badge-info';
-                    break;
+                      progressStatusColor = 'badge badge-info';
+                      break;
                     case '6':
-                    progressStatusColor = 'badge badge-success';
-                    break;
+                      progressStatusColor = 'badge badge-success';
+                      break;
                     case '7':
-                    progressStatusColor = 'badge badge-success';
-                    break;
+                      progressStatusColor = 'badge badge-success';
+                      break;
                     case '8':
-                    progressStatusColor = 'badge badge-danger';
-                    break;
+                      progressStatusColor = 'badge badge-danger';
+                      break;
+                  }
+
+                  html += '<tr onclick="location.href=' + "'/aslist/" + cmd.data[i].asNo + "'"
+                      + '">';
+                  /*html += '<td class="text-center">' +
+                      '<a class="btn btn-primary btn-action mr-1" ' +
+                      'data-toggle="tooltip" title="" ' + 'onclick="location.href=' + "'/repairs/"
+                      + cmd.data[i].asNo + "'" + '" data-original-title="Edit">' +
+                      '<i class="fas fa-pencil-alt"></i></a>' +
+                      '</td>';*/
+                  html += '<td class="text-center"><div class="' + progressStatusColor + '">'
+                      + convertProgressStatus(
+                          cmd.data[i].progressStatus) + '</div></td>';
+                  html += '<td class="text-center">' + convertDateFormat(cmd.data[i].createDate,
+                      'YYYY-MM-DD') + '</td>';
+                  html += '<td class="text-center">' + cmd.data[i].ptnCompName + '</td>';
+                  html += '<td class="text-center">' + cmd.data[i].terminalId + '</td>';
+                  html += '<td class="text-left">' + cmd.data[i].compName + '</td>';
+                  html += '<td class="text-left">' + cmd.data[i].ctmName + '</td>';
+                  html += '<td class="text-left">' + cmd.data[i].ctmPhone + '</td>';
+                  html += '<td class="text-left">'
+                      + '(' + cmd.data[i].ctmPlacePostCode + ')'
+                      + cmd.data[i].ctmPlaceAddress1 + '<br>'
+                      + cmd.data[i].ctmPlaceAddress2
+                      + '</td>';
+                  html += '<td class="text-left">' + cmd.data[i].ctmPhone + '</td>';
+                  html += '</tr>';
                 }
 
-                html += '<tr onclick="location.href=' + "'/aslist/" + cmd.data[i].asNo + "'" + '">';
-                /*html += '<td class="text-center">' +
-                    '<a class="btn btn-primary btn-action mr-1" ' +
-                    'data-toggle="tooltip" title="" ' + 'onclick="location.href=' + "'/repairs/"
-                    + cmd.data[i].asNo + "'" + '" data-original-title="Edit">' +
-                    '<i class="fas fa-pencil-alt"></i></a>' +
-                    '</td>';*/
-                html += '<td class="text-center"><div class="'+progressStatusColor+'">' + convertProgressStatus(
-                    cmd.data[i].progressStatus) + '</div></td>';
-                html += '<td class="text-center">' + convertDateFormat(cmd.data[i].createDate,
-                    'YYYY-MM-DD') + '</td>';
-                html += '<td class="text-center">' + cmd.data[i].ptnCompName + '</td>';
-                html += '<td class="text-center">' + cmd.data[i].terminalId + '</td>';
-                html += '<td class="text-left">' + cmd.data[i].compName + '</td>';
-                html += '<td class="text-left">' + cmd.data[i].ctmName + '</td>';
-                html += '<td class="text-left">' + cmd.data[i].ctmPhone + '</td>';
-                html += '<td class="text-left">'
-                    + '(' + cmd.data[i].ctmPlacePostCode + ')'
-                    + cmd.data[i].ctmPlaceAddress1 + '<br>'
-                    + cmd.data[i].ctmPlaceAddress2
-                    + '</td>';
-                html += '<td class="text-left">' + cmd.data[i].ctmPhone + '</td>';
+                createPagination(cmd.page);
+              } else {
+                html += '';
+                html += '<tr>';
+                html += '<td colspan="9" class="text-center">조회된 내역이 없습니다.</td>';
                 html += '</tr>';
               }
+              $('#tableBody').html(html);
 
-              createPagination(cmd.page);
-            } else {
-              html += '';
-              $('.pagination').html(html);
             }
-
-            $('#tableBody').html(html);
             loadingStop();
           }, // success
           error: function (xhr, status) {
@@ -226,6 +233,9 @@
           }
         });
       }
+
+
+
     </script>
 </head>
 <body onload="init();">
@@ -239,7 +249,7 @@
                         <div class="card-body">
                             <div class="row form-divider text-primary">
                                 단말기 AS 접수내역
-                                <a class="btn btn-primary" href="/as/info">신규등록
+                                <a class="btn btn-primary" href="/as/info">신규등록-구현중
                                     <span
                                             class="badge badge-white">N</span></a>
                             </div>
@@ -291,9 +301,15 @@
                                                            class="form-control col-6">
                                                     <div class="input-group-append">
                                                         <button class="btn btn-primary"
-                                                                type="button" onclick="callList(1)">
+                                                                type="button"
+                                                                onclick="callList(1, 'html')">
                                                             조회
                                                         </button>
+                                                    </div>
+                                                    <div class="input-group-btn my-auto">
+                                                        <button class="btn btn-warning"
+                                                                onclick="_clearSearchForm()"/>
+                                                        <i class="fas fa-rotate"></i></button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -406,9 +422,10 @@
                                 <%--<code>※정렬순서요청(오름차순): 불량내역, 수리내역, 메인REV, 서브REV, ICREV</code>--%>
                             </div>
                             <div class="float-right">
-                                <button class="btn btn-primary" onclick="excelDownload('as');">
+                                <button class="btn btn-primary" onclick="callList(0, 'excel');">
                                     <i class="fas fa-file-download lh-0"></i> 엑셀 다운로드
                                 </button>
+                                <button onclick="testEvent()">테스트</button>
                             </div>
                         </div>
                         <div class="card-body pt-0">
@@ -429,7 +446,9 @@
                                     </tr>
                                     </thead>
                                     <tbody id="tableBody">
-                                    <tr><td>조회를 눌러 검색해주세요.</td></tr>
+                                    <tr>
+                                        <td>조회를 눌러 검색해주세요.</td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>

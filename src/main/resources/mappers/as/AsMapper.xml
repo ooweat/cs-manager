@@ -110,7 +110,7 @@
     'Asia/Seoul' -
     LIST.REG_TIMESTAMP::TIMESTAMP),
     LIST.DEPOSIT
-    ORDER BY PROGRESS_STATUS, LIST.MODIFY_TIMESTAMP DESC, LIST.REG_TIMESTAMP DESC
+    ORDER BY PROGRESS_STATUS, LIST.REG_TIMESTAMP DESC, LIST.MODIFY_TIMESTAMP DESC
   </select>
   <select id="findAsByAsNo" parameterType="string" resultType="kr.co.company.as.domain.As">
     SELECT LIST.AS_NO                                                             AS ASNO,

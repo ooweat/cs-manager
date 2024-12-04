@@ -347,6 +347,11 @@ function diffDate() {
   }
 }
 
+function _clearSearchForm() {
+  $('#searchValue').val('');
+  $('#searchType').val('0').prop('selected', true);
+}
+
 function excelTemplate(target) {
   let queryString = "?page=" + 0;
   location.href = "/api/" + target + "/excelTemplate" + queryString;

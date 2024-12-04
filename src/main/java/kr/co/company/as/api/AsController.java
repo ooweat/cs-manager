@@ -1,6 +1,8 @@
 package kr.co.company.as.api;
 
+import java.io.IOException;
 import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
 import kr.co.company.as.application.AsService;
 import kr.co.company.as.application.dto.AsRequest;
 import kr.co.company.as.domain.As;
@@ -37,6 +39,11 @@ public class AsController {
     @GetMapping(value = "/aslist")
     public ResponseEntity<Map> findAsList(AsRequest asRequest) {
         return ResponseEntity.ok(asService.findAsList(asRequest));
+    }
+    
+    @GetMapping(value = "/aslist/excel")
+    public void findAsListExcel(AsRequest asRequest, HttpServletResponse response) throws IOException {
+        asService.findAsListExcel(asRequest, response);
     }
     
     @GetMapping("/aslist/{asNo}")

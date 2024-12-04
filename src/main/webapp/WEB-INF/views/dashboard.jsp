@@ -112,7 +112,7 @@
                         <i class="fas fa-search"></i>
                     </div>
                     <div class="card-body">
-                        <h4>단말기 i</h4>
+                        <h4>단말기 Quick</h4>
                         <p>단말기와 관련된 정보를 축약해서 볼 수 있습니다.</p>
                         <a href="#" onclick="openPopup();" class="card-cta">팝업 열기 <i
                                 class="fas fa-chevron-right"></i></a>
