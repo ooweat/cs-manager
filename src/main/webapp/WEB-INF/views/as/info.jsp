@@ -13,394 +13,263 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
           name="viewport">
-    <script type="text/javascript" src="/static/assets/js/jquery.js"></script>
+    <script type="text/javascript" src="/assets/js/info.js"></script>
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
     <%--<script type="text/javascript" src="/static/assets/js/summernote-bs4.js"></script>--%>
     <title></title>
     <script type="text/javascript">
-      async function init() {
-        //수정일 경우
-        if ('${asNo}' != '') {
-          $('#confirmBtn').text('수정');
-          $('#reRegistermBtn').show();
-          $('.regist-group').show();
-          await getInfoData('${asNo}');
-        } else { //등록일 경우
-          $('.regist-group').hide();
-          callCompany();
-          callPartners();
-          callTerminalModel();
-          callVMModel();
-          callError();
-        }
-      }
-
-      async function getInfoData(asNo) {
-        $.ajax({
-          type: "GET",
-          url: "/api/aslist/" + asNo,
-          cache: false,
-          success: function (cmd) {
-            console.log(cmd);
-
-            $('#ptnWriter').val(cmd.ptnWriter);
-            $('#asNo').val(cmd.asNo);
-            $('#compName').val(cmd.compName);
-            $('#businessNo').val(
-                validateNotEmpty(cmd.businessNo) ? cmd.businessNo : '000-00-00000');
-            $('#ctmName').val(cmd.ctmName);
-            $('#ctmPhone').val(cmd.ctmPhone);
-            $('#terminalId').val(cmd.terminalId);
-
-            $('#ctmPlacePostCode').val(cmd.ctmPlacePostCode);
-            $('#ctmPlaceAddress1').val(cmd.ctmPlaceAddress1);
-            $('#ctmPlaceAddress2').val(cmd.ctmPlaceAddress2);
-            $('#ctmPlaceName').val(cmd.ctmPlaceName);
-
-            $("#ctmCharge").val(cmd.ctmCharge).trigger('change');
-            //비용여부
-            validateNotEmpty(cmd.ctmCharge) ? $("#ctmCharge").val(cmd.ctmCharge).trigger('change') :
-                $("#ctmCharge").val('Y').trigger('change')
-            ;
-
-            //입금여부
-            validateNotEmpty(cmd.deposit) ? $("#deposit").val(cmd.deposit).trigger('change') :
-                $("#deposit").val('Y').trigger('change')
-            ;
-
-            $('#repairCost').val(cmd.repairCost);
-            $('#transferCost').val(cmd.transferCost);
-
-            validateNotEmpty(cmd.ptnFinale) ? $('#ptnFinale').val(cmd.ptnFinale) : $(
-                '#ptnFinale').parent().hide();
-            validateNotEmpty(cmd.ptnCpDate) ? $('#ptnCpDate').val(cmd.ptnCpDate) : $(
-                '#ptnCpDate').parent().hide();
-            validateNotEmpty(cmd.modifyUser) ? $('#modifyUser').val(cmd.modifyUser) : $(
-                '#modifyUser').parent().hide();
-            $('#modifyDate').val(convertDateFormat(cmd.modifyDate));
-
-            callSeqName("vmSeq", cmd.vmSeq);
-            callSeqName("tidSeq", cmd.tidSeq);
-            $('#trbSeq').attr("disabled", true);
-            callSeqName("trbSeq", cmd.trbSeq);
-            callSeqName("rtSeq", cmd.rtSeq);
-            callSeqName("atSeq", cmd.atSeq);
-
-            callSeqName("progressStatus", cmd.progressStatus);
-            callSeqName("ptnCompSeq", cmd.ptnCompSeq);
-
-            //조회 완료 후, 후처리
-            if ('${member.userLevel}' == "OP") {
-              $('#ptnCompSeq').attr("disabled", true);
+        async function init() {
+            //수정일 경우
+            if ('${asNo}' != '') {
+                $('#confirmBtn').text('수정');
+                $('#reRegistermBtn').show();
+                $('.regist-group').show();
+                await getInfoData('${asNo}');
+            } else { //등록일 경우
+                $('.regist-group').hide();
+                callCompany();
+                callPartners();
+                callTerminalModel();
+                callVMModel();
+                callError();
             }
-            if ($('#atSeq :selected').text().includes('모뎀')) {
-              $('#modemSerialRow').show();
-            } else {
-              $('#modemSerialRow').hide();
-            }
-
-            /*$('#compSeq').prepend(
-                '<option value="' + cmd.compSeq + '" selected=selected>' + cmd.compName
-                + '</option>');
-            cmd.ptnCompSeq == null ? $("#ptnCompSeq").val('Y').trigger('change') : $(
-                "#ptnCompSeq").val(cmd.ptnCompSeq).trigger('change');
-            $('#serialNo').val(cmd.serialNo);
-            $('#cid').val(cmd.cid);
-            cmd.samFlag == null ? $("#samFlag").val('Y').trigger('change') : $("#samFlag").val(
-                cmd.samFlag).trigger('change');
-            cmd.tidSeq == null ? $("#tidSeq").val(0).trigger('change') : $("#tidSeq").val(
-                cmd.tidSeq).trigger('change');
-            $('#terminalId').val(cmd.terminalId);
-            $('#repairDate').val(cmd.repairDate);
-            $('#repairExpireDate').val(cmd.repairExpireDate);
-
-            cmd.trbSeq == null ? $("#trbSeq").val(0).trigger('change') : $("#trbSeq").val(
-                cmd.trbSeq).trigger('change');
-            cmd.rtSeq == null ? $("#rtSeq").val(0).trigger('change') : $("#rtSeq").val(
-                cmd.rtSeq).trigger('change');
-            cmd.atSeq == null ? $("#atSeq").val(0).trigger('change') : $("#atSeq").val(
-                cmd.atSeq).trigger('change');
-            cmd.mbRvSeq == null ? $("#mbRvSeq").val(0).trigger('change') : $("#mbRvSeq").val(
-                cmd.mbRvSeq).trigger('change');
-            cmd.sbRvSeq == null ? $("#sbRvSeq").val(0).trigger('change') : $("#sbRvSeq").val(
-                cmd.sbRvSeq).trigger('change');
-            cmd.icRvSeq == null ? $("#icRvSeq").val(0).trigger('change') : $("#icRvSeq").val(
-                cmd.icRvSeq).trigger('change');*/
-
-            //ptnComment
-            $('#ptnComment').html(cmd.ptnComment);
-            $('#ptnMemo').html(cmd.ptnMemo);
-
-            loadingStop();
-          }, // success
-          error: function (xhr, status) {
-            alert(xhr + " : " + status);
-          }
-        });
-      }
-
-      function callCompany() {
-        $.ajax({
-          type: "GET",
-          url: "/api/settings/companys",
-          cache: false,
-          success: function (cmd) {
-            if (cmd.data.length > 0) {
-              for (let i = 0; i < cmd.data.length; i++) {
-                $('#compSeq').append(
-                    '<option value="' + cmd.data[i].seq + '"">' + cmd.data[i].name + '</option>');
-              }
-            }
-            loadingStop();
-          }, // success
-          error: function (xhr, status) {
-            alert(xhr + " : " + status);
-            location.href("/");
-          }
-        });
-      }
-
-      function callPartners() {
-        $.ajax({
-          type: "GET",
-          url: "/api/settings/partners/${member.companySeq}",
-          cache: false,
-          success: function (cmd) {
-            if (cmd.data.length > 0) {
-              for (let i = 0; i < cmd.data.length; i++) {
-                $('#ptnCompSeq').append(
-                    '<option value="' + cmd.data[i].seq + '"">' + cmd.data[i].name + '</option>');
-              }
-            }
-            loadingStop();
-          }, // success
-          error: function (xhr, status) {
-            alert(xhr + " : " + status);
-            location.href("/");
-          }
-        });
-      }
-
-      function callSeqName(target, value) {
-        let url = "";
-        switch (target) {
-          case 'tidSeq':
-            url = "/api/settings/terminal-models";
-            break;
-          case 'vmSeq':
-            url = "/api/settings/vm-models";
-            break;
-          case 'trbSeq':
-            url = "/api/settings/troubles";
-            break;
-          case 'atSeq':
-            url = "/api/settings/actionTroubles";
-            break;
-          case 'rtSeq':
-            url = "/api/settings/realTroubles";
-            break;
-          case 'progressStatus':
-            url = "/api/settings/asStatus/${member.userLevel}/${member.companySeq}";
-            break;
-          case 'ptnCompSeq':
-            url = "/api/settings/partners/${member.companySeq}";
-            break;
         }
 
-        $.ajax({
-          type: "GET",
-          url: url,
-          cache: false,
-          success: function (cmd) {
-            if (cmd.data.length > 0) {
-              if (value == 0) {
-                $('#' + target).next().children("span").parent().css("border", "solid 1px red");
-              }
-              for (let i = 0; i < cmd.data.length; i++) {
-                let selected = cmd.data[i].seq == value ? ' selected' : "";
-                $('#' + target).append(
-                    '<option value="' + cmd.data[i].seq + '" ' + selected + '>' + cmd.data[i].name
-                    + '</option>');
-              }
-            }
-            loadingStop();
-          }, // success
-          error: function (xhr, status) {
-            alert(xhr + " : " + status);
-            location.href("/");
-          }
-        });
-      }
-
-      function callVMModel(vmSeq) {
-        $.ajax({
-          type: "GET",
-          url: "/api/settings/vm-models",
-          cache: false,
-          success: function (cmd) {
-            if (cmd.data.length > 0) {
-
-              for (let i = 0; i < cmd.data.length; i++) {
-                let selected = cmd.data[i].seq == vmSeq ? ' selected' : "";
-                $('#vmSeq').append(
-                    '<option value="' + cmd.data[i].seq + '" ' + selected + '>' + cmd.data[i].name
-                    + '</option>');
-              }
-            }
-            loadingStop();
-          }, // success
-          error: function (xhr, status) {
-            alert(xhr + " : " + status);
-            location.href("/");
-          }
-        });
-      }
-
-      function callError() {
-        $.ajax({
-          type: "GET",
-          url: "/api/settings/errors/repair",
-          cache: false,
-          success: function (cmd) {
-            if (cmd.data.length > 0) {
-              for (let i = 0; i < cmd.data.length; i++) {
-                if (cmd.data[i].type == 'RT') {
-                  $('#trbSeq').append(
-                      '<option value="' + cmd.data[i].seq + '"">' + cmd.data[i].name + '</option>');
-                } else if (cmd.data[i].type == 'RA') {
-                  $('#atSeq').append(
-                      '<option value="' + cmd.data[i].seq + '"">' + cmd.data[i].name + '</option>');
-                }
-              }
-            }
-            loadingStop();
-          }, // success
-          error: function (xhr, status) {
-            alert(xhr + " : " + status);
-            location.href("/");
-          }
-        });
-      }
-
-      function _confirm(methodType) {
-        if ($('#compSeq').val() == '0') {
-          alert('발송처를 선택해주세요.');
-          $('#compSeq').focus();
-          return;
-        }
-
-        if ($('#ptnCompSeq').val() == '0') {
-          alert('협력사를 선택해주세요.');
-          $('#ptnCompSeq').focus();
-          return;
-        }
-
-        if ($('#terminalId').val() == '') {
-          alert('TID를 입력해주세요.(없을 경우 0000000000)');
-          $('#terminalId').focus();
-          return;
-        }
-
-        if ($('#cid').val() == '') {
-          alert('CID를 입력해주세요.');
-          $('#cid').focus();
-          return;
-        }
-        switch (methodType) {
-          case 'post':
-            if (confirm('등록하시겠습니까?')) {
-              $.ajax({
-                method: "POST",
-                url: "/api/as",
-                contentType: "application/json",
-                dataType: "json",
-                data: JSON.stringify({
-                  "compSeq": $('#compSeq').val(),
-                  "ptnCompSeq": $('#ptnCompSeq').val(),
-                  "repairDate": $('#repairDate').val(),
-                  "repairExpireDate": $('#repairExpireDate').val(),
-                  "compName": $('#compSeq :selected').text(),
-                  "terminalId": $('#terminalId').val(),
-                  "trbSeq": $('#trbSeq').val(),
-                  "ptnComment": $('#ptnComment').val(),
-                  "rtSeq": $('#rtSeq').val(),
-                  "atSeq": $('#atSeq').val(),
-                  "ptnWriter": '${member.userName}',
-                  "tidSeq": $('#tidSeq').val(),
-                  "cid": $('#cid').val(),
-                  "serialNo": $('#serialNo').val(),
-                  "samFlag": $('#samFlag').val(),
-                  "mbRvSeq": $('#mbRvSeq').val(),
-                  "sbRvSeq": $('#sbRvSeq').val(),
-                  "icRvSeq": $('#icRvSeq').val(),
-                }),
+        async function getInfoData(asNo) {
+            $.ajax({
+                type: "GET",
+                url: "/api/aslist/" + asNo,
                 cache: false,
                 success: function (cmd) {
-                  if (cmd.code == '0000') {
-                    alert('저장되었습니다.');
-                    location.href = '/repairs';
-                  }
-                  loadingStop();
+                    console.log(cmd);
+
+                    $('#ptnWriter').val(cmd.ptnWriter);
+                    $('#asNo').val(cmd.asNo);
+                    $('#compName').val(cmd.compName);
+                    $('#businessNo').val(
+                        validateNotEmpty(cmd.businessNo) ? cmd.businessNo : '000-00-00000');
+                    $('#ctmName').val(cmd.ctmName);
+                    $('#ctmPhone').val(cmd.ctmPhone);
+                    $('#terminalId').val(cmd.terminalId);
+
+                    $('#ctmPlacePostCode').val(cmd.ctmPlacePostCode);
+                    $('#ctmPlaceAddress1').val(cmd.ctmPlaceAddress1);
+                    $('#ctmPlaceAddress2').val(cmd.ctmPlaceAddress2);
+                    $('#ctmPlaceName').val(cmd.ctmPlaceName);
+
+                    $("#ctmCharge").val(cmd.ctmCharge).trigger('change');
+                    //비용여부
+                    validateNotEmpty(cmd.ctmCharge) ? $("#ctmCharge").val(cmd.ctmCharge).trigger(
+                            'change') :
+                        $("#ctmCharge").val('Y').trigger('change')
+                    ;
+
+                    //입금여부
+                    validateNotEmpty(cmd.deposit) ? $("#deposit").val(cmd.deposit).trigger('change')
+                        :
+                        $("#deposit").val('Y').trigger('change')
+                    ;
+
+                    $('#repairCost').val(cmd.repairCost);
+                    $('#transferCost').val(cmd.transferCost);
+
+                    validateNotEmpty(cmd.ptnFinale) ? $('#ptnFinale').val(cmd.ptnFinale) : $(
+                        '#ptnFinale').parent().hide();
+                    validateNotEmpty(cmd.ptnCpDate) ? $('#ptnCpDate').val(cmd.ptnCpDate) : $(
+                        '#ptnCpDate').parent().hide();
+                    validateNotEmpty(cmd.modifyUser) ? $('#modifyUser').val(cmd.modifyUser) : $(
+                        '#modifyUser').parent().hide();
+                    $('#modifyDate').val(convertDateFormat(cmd.modifyDate));
+
+                    callSeqName("vmSeq", cmd.vmSeq);
+                    callSeqName("tidSeq", cmd.tidSeq);
+                    $('#trbSeq').attr("disabled", true);
+                    callSeqName("trbSeq", cmd.trbSeq);
+                    callSeqName("rtSeq", cmd.rtSeq);
+                    callSeqName("atSeq", cmd.atSeq);
+
+                    callSeqName("progressStatus", cmd.progressStatus);
+                    callSeqName("ptnCompSeq", cmd.ptnCompSeq);
+
+                    //조회 완료 후, 후처리
+                    if ('${member.userLevel}' == "OP") {
+                        $('#ptnCompSeq').attr("disabled", true);
+                    }
+                    if ($('#atSeq :selected').text().includes('모뎀')) {
+                        $('#modemSerialRow').show();
+                    } else {
+                        $('#modemSerialRow').hide();
+                    }
+
+                    /*$('#compSeq').prepend(
+                        '<option value="' + cmd.compSeq + '" selected=selected>' + cmd.compName
+                        + '</option>');
+                    cmd.ptnCompSeq == null ? $("#ptnCompSeq").val('Y').trigger('change') : $(
+                        "#ptnCompSeq").val(cmd.ptnCompSeq).trigger('change');
+                    $('#serialNo').val(cmd.serialNo);
+                    $('#cid').val(cmd.cid);
+                    cmd.samFlag == null ? $("#samFlag").val('Y').trigger('change') : $("#samFlag").val(
+                        cmd.samFlag).trigger('change');
+                    cmd.tidSeq == null ? $("#tidSeq").val(0).trigger('change') : $("#tidSeq").val(
+                        cmd.tidSeq).trigger('change');
+                    $('#terminalId').val(cmd.terminalId);
+                    $('#repairDate').val(cmd.repairDate);
+                    $('#repairExpireDate').val(cmd.repairExpireDate);
+
+                    cmd.trbSeq == null ? $("#trbSeq").val(0).trigger('change') : $("#trbSeq").val(
+                        cmd.trbSeq).trigger('change');
+                    cmd.rtSeq == null ? $("#rtSeq").val(0).trigger('change') : $("#rtSeq").val(
+                        cmd.rtSeq).trigger('change');
+                    cmd.atSeq == null ? $("#atSeq").val(0).trigger('change') : $("#atSeq").val(
+                        cmd.atSeq).trigger('change');
+                    cmd.mbRvSeq == null ? $("#mbRvSeq").val(0).trigger('change') : $("#mbRvSeq").val(
+                        cmd.mbRvSeq).trigger('change');
+                    cmd.sbRvSeq == null ? $("#sbRvSeq").val(0).trigger('change') : $("#sbRvSeq").val(
+                        cmd.sbRvSeq).trigger('change');
+                    cmd.icRvSeq == null ? $("#icRvSeq").val(0).trigger('change') : $("#icRvSeq").val(
+                        cmd.icRvSeq).trigger('change');*/
+
+                    //ptnComment
+                    $('#ptnComment').html(cmd.ptnComment);
+                    $('#ptnMemo').html(cmd.ptnMemo);
+
+                    loadingStop();
                 }, // success
                 error: function (xhr, status) {
-                  alert(xhr + " : " + status);
+                    alert(xhr + " : " + status);
                 }
-              });
-            }
-            break;
-          case 'patch':
-            if (confirm('수정하시겠습니까?')) {
-              $.ajax({
-                method: "PATCH",
-                url: "/api/aslist/${asNo}",
-                contentType: "application/json",
-                dataType: "json",
-                data: JSON.stringify({
-                  "compSeq": $('#compSeq').val(),
-                  "ptnCompSeq": $('#ptnCompSeq').val(),
-                  "repairDate": $('#repairDate').val(),
-                  "repairExpireDate": $('#repairExpireDate').val(),
-                  "compName": $('#compSeq :selected').text(),
-                  "terminalId": $('#terminalId').val(),
-                  "trbSeq": $('#trbSeq').val(),
-                  "ptnComment": $('#ptnComment').val(),
-                  "rtSeq": $('#rtSeq').val(),
-                  "atSeq": $('#atSeq').val(),
-                  "modifyUser": '${member.userName}',
-                  "tidSeq": $('#tidSeq').val(),
-                  "cid": $('#cid').val(),
-                  "serialNo": $('#serialNo').val(),
-                  "samFlag": $('#samFlag').val(),
-                  "mbRvSeq": $('#mbRvSeq').val(),
-                  "sbRvSeq": $('#sbRvSeq').val(),
-                  "icRvSeq": $('#icRvSeq').val(),
-                }),
-                cache: false,
-                success: function (cmd) {
-                  if (cmd.code == '0000') {
-                    alert('저장되었습니다.');
-                    location.href = '/repairs';
-                  }
-                  loadingStop();
-                }, // success
-                error: function (xhr, status) {
-                  alert(xhr + " : " + status);
-                }
-              });
-            }
-            break;
+            });
         }
-      }
 
-      function setDateRangePicker(btnType) {
-        let repairExpireDate = new Date($('#repairDate').val());
-        repairExpireDate.setMonth(repairExpireDate.getMonth() + Number(btnType));
-        repairExpireDate = repairExpireDate.getFullYear() + "-" + (('0'
-            + (repairExpireDate.getMonth()
-                + 1)).slice(-2)) + "-" + (('0' + repairExpireDate.getDate()).slice(-2));
+        function popupInit(v) {
+            callCompany();
+            switch (v) {
+                case 'company':
+                    window.open('/company', 'company', 'width=800, height=800, left=100, top=100');
+                    break;
+            }
+        }
 
-        $('#repairExpireDate').val(repairExpireDate);
-      }
+        function _confirm(methodType) {
+            if ($('#compSeq').val() == '0') {
+                alert('발송처를 선택해주세요.');
+                $('#compSeq').focus();
+                return;
+            }
+
+            if ($('#ptnCompSeq').val() == '0') {
+                alert('협력사를 선택해주세요.');
+                $('#ptnCompSeq').focus();
+                return;
+            }
+
+            if ($('#terminalId').val() == '') {
+                alert('TID를 입력해주세요.(없을 경우 0000000000)');
+                $('#terminalId').focus();
+                return;
+            }
+
+            if ($('#cid').val() == '') {
+                alert('CID를 입력해주세요.');
+                $('#cid').focus();
+                return;
+            }
+            switch (methodType) {
+                case 'post':
+                    if (confirm('등록하시겠습니까?')) {
+                        $.ajax({
+                            method: "POST",
+                            url: "/api/as",
+                            contentType: "application/json",
+                            dataType: "json",
+                            data: JSON.stringify({
+                                "compSeq": $('#compSeq').val(),
+                                "ptnCompSeq": $('#ptnCompSeq').val(),
+                                "repairDate": $('#repairDate').val(),
+                                "repairExpireDate": $('#repairExpireDate').val(),
+                                "compName": $('#compSeq :selected').text(),
+                                "terminalId": $('#terminalId').val(),
+                                "trbSeq": $('#trbSeq').val(),
+                                "ptnComment": $('#ptnComment').val(),
+                                "rtSeq": $('#rtSeq').val(),
+                                "atSeq": $('#atSeq').val(),
+                                "ptnWriter": '${member.userName}',
+                                "tidSeq": $('#tidSeq').val(),
+                                "cid": $('#cid').val(),
+                                "serialNo": $('#serialNo').val(),
+                                "samFlag": $('#samFlag').val(),
+                                "mbRvSeq": $('#mbRvSeq').val(),
+                                "sbRvSeq": $('#sbRvSeq').val(),
+                                "icRvSeq": $('#icRvSeq').val(),
+                            }),
+                            cache: false,
+                            success: function (cmd) {
+                                if (cmd.code == '0000') {
+                                    alert('저장되었습니다.');
+                                    location.href = '/repairs';
+                                }
+                                loadingStop();
+                            }, // success
+                            error: function (xhr, status) {
+                                alert(xhr + " : " + status);
+                            }
+                        });
+                    }
+                    break;
+                case 'patch':
+                    if (confirm('수정하시겠습니까?')) {
+                        $.ajax({
+                            method: "PATCH",
+                            url: "/api/aslist/${asNo}",
+                            contentType: "application/json",
+                            dataType: "json",
+                            data: JSON.stringify({
+                                "compSeq": $('#compSeq').val(),
+                                "ptnCompSeq": $('#ptnCompSeq').val(),
+                                "repairDate": $('#repairDate').val(),
+                                "repairExpireDate": $('#repairExpireDate').val(),
+                                "compName": $('#compSeq :selected').text(),
+                                "terminalId": $('#terminalId').val(),
+                                "trbSeq": $('#trbSeq').val(),
+                                "ptnComment": $('#ptnComment').val(),
+                                "rtSeq": $('#rtSeq').val(),
+                                "atSeq": $('#atSeq').val(),
+                                "modifyUser": '${member.userName}',
+                                "tidSeq": $('#tidSeq').val(),
+                                "cid": $('#cid').val(),
+                                "serialNo": $('#serialNo').val(),
+                                "samFlag": $('#samFlag').val(),
+                                "mbRvSeq": $('#mbRvSeq').val(),
+                                "sbRvSeq": $('#sbRvSeq').val(),
+                                "icRvSeq": $('#icRvSeq').val(),
+                            }),
+                            cache: false,
+                            success: function (cmd) {
+                                if (cmd.code == '0000') {
+                                    alert('저장되었습니다.');
+                                    location.href = '/repairs';
+                                }
+                                loadingStop();
+                            }, // success
+                            error: function (xhr, status) {
+                                alert(xhr + " : " + status);
+                            }
+                        });
+                    }
+                    break;
+            }
+        }
+
+        function setDateRangePicker(btnType) {
+            let repairExpireDate = new Date($('#repairDate').val());
+            repairExpireDate.setMonth(repairExpireDate.getMonth() + Number(btnType));
+            repairExpireDate = repairExpireDate.getFullYear() + "-" + (('0'
+                + (repairExpireDate.getMonth()
+                    + 1)).slice(-2)) + "-" + (('0' + repairExpireDate.getDate()).slice(-2));
+
+            $('#repairExpireDate').val(repairExpireDate);
+        }
     </script>
 </head>
 <body onload="init()">
@@ -434,7 +303,7 @@
                                                name="compName" readonly>
                                         <div class="input-group-append">
                                             <button class="btn btn-info" type="button"
-                                                    onclick="$('#compName').val('0000000000')">
+                                                    onclick="popupInit('company')">
                                                 <i class="fas fa-store-alt"></i> <i
                                                     class="fas fa-search"></i>
                                             </button>

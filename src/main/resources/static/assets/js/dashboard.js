@@ -225,21 +225,22 @@ function callErrorTop5(type) {
       let titles = [];
       let colors = ['#70abe7', '#63ed7a', '#ffa426', '#fc544b', '#6777ef'];
       if (cmd.data.length > 0) {
+        console.log(cmd);
         //console.log(cmd.data);
         for (let i = 0; i < cmd.data.length; i++) {
           values.push(cmd.data[i].count);
           titles.push(cmd.data[i].name);
           html += '<div class="text-center p-1">';
           html += '<div class="btn" style="background: ' + colors[i] + '"></div>';
-          html += '<div class="mt-1 font-weight-bold">' + cmd.data[i].name + '</div>';
+          html += '<div class="mt-1 font-weight-bold tof-e width-100" data-toggle="tooltip" data-original-title="'+cmd.data[i].name+'">'
+              + cmd.data[i].name + '</div>';
           html += '<div class="text-muted text-small"><span class="text-primary"></span> '
-              + (cmd.size * (cmd.data[i].count/1000)).toFixed(1) + ' %'
+              + (100 * (cmd.data[i].count/cmd.size)).toFixed(1) + ' %'
               + '</div>';
           html += '</div>';
         }
-
         $('#' + type + '-top5').html(html);
-
+        $("[data-toggle='tooltip']").tooltip();
         //console.log(values);
         let myChart = new Chart(ctx, {
           type: 'doughnut',
@@ -279,7 +280,7 @@ function callErrorTop5(type) {
               callbacks: {
                 label: function (tooltipItem, data) {
                   let tooltipValue = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-                  return parseInt((cmd.size * (tooltipValue/1000)).toFixed(1)).toLocaleString() + "%";
+                  return parseInt((100 * (tooltipValue/cmd.size)).toFixed(1)).toLocaleString() + "%";
                 }
               }
             },

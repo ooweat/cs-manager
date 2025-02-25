@@ -20,7 +20,6 @@
       }
     </style>
     <script type="text/javascript" src="/assets/js/jquery.js"></script>
-    <script type="text/javascript" src="/assets/js/dashboard.js"></script>
     <script type="text/javascript" src="/assets/js/custom.js"></script>
     <script type="text/javascript">
       function openPopup() {
