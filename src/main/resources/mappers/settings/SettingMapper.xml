@@ -14,7 +14,7 @@
           AND COMPANY_SEQ BETWEEN '2001' AND '2005'
         </when>
         <otherwise>
-          AND COMPANY_SEQ = #{ptnCompSeq}
+          AND COMPANY_SEQ = ${ptnCompSeq}
         </otherwise>
       </choose>
     </if>
@@ -23,6 +23,7 @@
   </select>
   <select id="findStatusByCompSeq" parameterType="string"
     resultType="kr.co.company.as.domain.CommonInfoType">
+    -- findStatusByCompSeq
     SELECT SEQ AS SEQ,
     NAME AS NAME
     FROM TB_PROGRESS_STATUS

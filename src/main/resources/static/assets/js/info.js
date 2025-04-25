@@ -43,6 +43,7 @@ function callPartners() {
 
 function callSeqName(target, value) {
   let url = "";
+  let userLevel = document.getElementById("userLevel").value;
   switch (target) {
     case 'tidSeq':
       url = "/api/settings/terminal-models";
@@ -60,10 +61,10 @@ function callSeqName(target, value) {
       url = "/api/settings/realTroubles";
       break;
     case 'progressStatus':
-      url = "/api/settings/asStatus/${member.userLevel}/${member.companySeq}";
+      url = "/api/settings/asStatus/"+userLevel + "/" + value;
       break;
     case 'ptnCompSeq':
-      url = "/api/settings/partners/${member.companySeq}";
+      url = "/api/settings/partners/" + value;
       break;
   }
 

@@ -38,6 +38,8 @@ public class SettingService {
     
     public Map<String, Object> findPartnerByCompSeq(String ptnCompSeq) {
         Map<String, Object> response = new HashMap<>();
+        System.out.println(ptnCompSeq);
+
         List<CommonInfoType> list = settingMapper.findPartnerByCompSeq(ptnCompSeq);
         response.put("data", list);
         return response;

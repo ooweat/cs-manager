@@ -100,8 +100,8 @@ public class SettingController {
         return ResponseEntity.ok(settingService.deleteSetting(settingRequest));
     }
 
-    @GetMapping("/syncCompany")
+    /*@GetMapping("/syncCompany")
     public ResponseEntity<Map> voidSyncCompany() {
         return ResponseEntity.ok(settingService.syncCompany());
-    }
+    }*/
 }

@@ -90,7 +90,7 @@
                     callSeqName("atSeq", cmd.atSeq);
 
                     callSeqName("progressStatus", cmd.progressStatus);
-                    callSeqName("ptnCompSeq", cmd.ptnCompSeq);
+                    callSeqName("ptnCompSeq", ${member.companySeq});
 
                     //조회 완료 후, 후처리
                     if ('${member.userLevel}' == "OP") {
@@ -274,6 +274,7 @@
 </head>
 <body onload="init()">
 <div class="main-content">
+    <input type="hidden" id="userLevel" value="${member.userLevel}"/>
     <div class="row">
         <div class="col-12">
             <form role="form" name="formData" id="formData" class="needs-validation row" novalidate>
