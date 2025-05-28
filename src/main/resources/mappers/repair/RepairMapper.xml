@@ -92,7 +92,7 @@
            AS_NO                                  AS ASNO,
            PTN_WRITER                             AS PTNWRITER,
            LIST.COMP_SEQ                          AS COMPSEQ,
-           COMP_NAME || '(' || BUSINESS_NO || ')' AS COMPNAME,
+           COMP_NAME || '(' || COMP.BUSINESS_NO || ')' AS COMPNAME,
            SERIAL_NO                              AS SERIALNO,
            CID                                    AS CID,
            PTN_COMP_SEQ                           AS PTNCOMPSEQ,
